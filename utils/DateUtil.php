@@ -6,6 +6,24 @@
 namespace app\utils;
 
 class DateUtil {
+    public static $weeks = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+
+
+    /**
+     * 根据时间戳获取星期名称
+     * @param int $time
+     * @return mixed
+     */
+    public static function getWeekByTime($time = false) {
+        if (!is_numeric($time)) {
+            return '';
+        }
+        $weekNum = date('w', $time);
+
+        return self::$weeks[$weekNum];
+    }
+
+
     /**
      * 根据两个日期或者范围日期
      * @param bool $startDate

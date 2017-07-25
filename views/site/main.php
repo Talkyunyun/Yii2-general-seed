@@ -43,17 +43,11 @@ $user = Yii::$app->user->identity;
         <!--左侧导航开始-->
         <nav class="site_nav_container" role="navigation">
             <div class="sidebar-collapse">
-                <div class="nav-header user_info_box">
-                    <div class="user_img">
-                        <img class="img-circle" src="/img/face.jpg" />
-                    </div>
-                    <div class="user_info">
-                        <h3><?= Yii::$app->user->identity->person ?> 您好</h3>
-                        <p>登录时间:<?= DateUtil::showFormatDate(AdminUserLoginLog::getLastTime(), 'Y-m-d') ?></p>
-                    </div>
+                <div class="week_info">
+                    <h4><?= DateUtil::getWeekByTime(time()) ?></h4>
+                    <p><?= DateUtil::showFormatDate(time(), 'Y年m月d日') ?></p>
                 </div>
-
-                <ul class="nav" id="side-menu" style="height:calc(100% - 154px);overflow-y:auto;">
+                <ul class="nav_container" id="side-menu" style="height:calc(100% - 154px);overflow-y:auto;">
                     <?= $this->render('menu', ['menu' => $menu]) ?>
                 </ul>
             </div>

@@ -1,4 +1,11 @@
+*{
+	padding:0;
+	margin: 0;
+}
 a, a:hover, a:focus, a:active{text-decoration: none}
+ul,li{
+	list-style: none;
+}
 html{
 	width:100%;
 	height:100%;
@@ -65,16 +72,61 @@ body.full_screen{
 	outline: none;
 	border: none;
 }
-.nav>li>a:focus, .nav>li>a:hover {
-	text-decoration: none;
-	background-color: rgba(0,0,0,0);
+
+/*导航*/
+.nav_container{
+
 }
-.nav>li>a {
-	position: relative;
+.nav_container>li{
+	border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+	overflow: hidden;
+}
+.nav_container>li a{
+	color: #ffffff;
+	padding:10px 15px;
 	display: block;
-	padding: 10px 15px;
-	color: #eaeaea;
 }
+.nav_list{
+	background:rgb(5, 130, 118)
+}
+.nav_list li{
+
+}
+.nav_container .angle-icon{
+	float: right;
+}
+ul.nav-second-level li a{
+	padding: 5px 15px 5px 30px
+}
+
+.sidebar-collapse{
+	width: auto;
+	height: 100%;
+	overflow: hidden;
+}
+
+.week_info{
+	background: #058276;
+	height: 60px;
+	text-align: center;
+	color: #fff;
+	overflow: hidden;
+}
+.week_info h4{
+	margin: 0;
+	margin-top: 10px;
+}
+.week_info p{
+	font-size: 13px;
+	color: #e2e2e2;
+	margin-top: 4px;
+}
+
+
+
+
+
+
 .page-tabs{
 	margin-left: 50px;
 	width: 100000px;
@@ -108,42 +160,6 @@ body.full_screen{
 	height: calc(100% - 80px);
 	width: 100%;
 	overflow: hidden;
-}
-.user_info_box{
-	text-align: center;
-	height: 94px;
-	padding: 0;
-	position: relative;
-	background-color:#098a7e;
-}
-
-.user_img{
-	width: 50px;
-	height: 50px;
-	position: absolute;
-	top: 20px;
-	left: 12px;
-}
-.user_img img{
-	width:100%;
-	height:100%;
-}
-.user_info{
-	color: #fff;
-	position: absolute;
-	text-align: left;
-	font-size: 12px;
-	left: 74px;
-	top: 8px;
-}
-.user_info h3{
-	font-size: 14px;
-	margin-top: 22px;
-}
-.user_info p{
-	font-size: 12px;
-	color: #eaeaea;
-	margin-top: -6px;
 }
 #toast-container{
 	position: fixed;
