@@ -1,0 +1,20 @@
+{
+    "name" : "Yii2 Seed General",
+    "description": "Yii2 Seed General Project",
+    "keywords": ["gene", "yii2", "seed"],
+    "type": "project",
+    "license": "BSD-3-Clause",
+    "require": {
+        "php" : ">=5.4.0",
+        "yiisoft/yii2" : "~2.0.6",
+        "monolog/monolog": "^1.22"
+    },
+    "require-dev" : {
+        "yiisoft/yii2-debug": "~2.0.0",
+        "yiisoft/yii2-gii": "~2.0.0",
+        "yiisoft/yii2-faker": "~2.0.0"
+    },
+    "config" : {
+        "process-timeout": 1800
+    }
+}
