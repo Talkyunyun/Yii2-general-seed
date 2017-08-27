@@ -40,17 +40,17 @@ body.full_screen{
 	background: #eaeaea;
 	width: 100%;
 	position: relative;
-	border-bottom: 2px solid #999999;
+	border-bottom: 2px solid #e2e2e2;
 }
 .page_container .page_header .roll-nav{
 	width: 50px;
 	height: 100%;
-	background: #cac5c3;
+	background: #ffffff;
 	outline: none;
 	border: none;
-	color: #717171;
+	color: #bfbfbf;
 	position: absolute;
-	top:0;
+	top: 0;
 }
 .nav-dropdown{
 	right: 0;
@@ -71,6 +71,8 @@ body.full_screen{
 	height: 100%;
 	outline: none;
 	border: none;
+	background: #fff;
+	color: #bfbfbf;
 }
 
 /*导航*/
@@ -80,6 +82,12 @@ body.full_screen{
 .nav_container>li{
 	border-bottom: 1px solid rgba(255, 255, 255, 0.28);
 	overflow: hidden;
+}
+.nav_container>li.active{
+	border-left: 4px solid #004D40;
+}
+.nav_container li a.active{
+	color: #FFC107;
 }
 .nav_container>li a{
 	color: #ffffff;
@@ -96,7 +104,8 @@ body.full_screen{
 	float: right;
 }
 ul.nav-second-level li a{
-	padding: 5px 15px 5px 30px
+	padding: 7px 15px 7px 10px;
+	padding-left: 40px;
 }
 
 .sidebar-collapse{
@@ -136,9 +145,18 @@ ul.nav-second-level li a{
 }
 .page-tabs a{
 	padding: 0 12px;
-	background: #6f6f6f;
-	color: #fff;
+	background: #ffffff;
+	color: #545454;
 	border-left: 1px solid #e0e0e0;
+	float: left;
+	height: 38px;
+	line-height: 38px;
+}
+.page-tabs a.active{
+	background: #009688;
+	color: #fff;
+}
+nav.page-tabs .page-tabs-content{
 	float: left;
 }
 

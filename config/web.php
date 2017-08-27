@@ -5,13 +5,13 @@
  */
 
 $config = [
-    'id'        => 'Yii2-Seed-General',
-    'basePath'  => dirname(__DIR__),
-    'charset'   => 'utf-8',
-    'language'  => 'zh-CN',
-    'timeZone'  => 'Asia/Shanghai',
-    'bootstrap' => ['log'],
-    'controllerNamespace' => 'app\controllers',
+    'id'                 => 'Yii2-Seed-General',
+    'basePath'           => dirname(__DIR__),
+    'charset'            => 'utf-8',
+    'language'           => 'zh-CN',
+    'timeZone'           => 'Asia/Shanghai',
+    'bootstrap'          => ['log'],
+    'controllerNamespace'=> 'app\controllers',
 
     // 公共的参数
     'params' => require(__DIR__ . '/params.php'),
@@ -51,10 +51,10 @@ $config = [
 ];
 
 // 加载对应环境配置文件
-$envConfig = require(__DIR__ . '/config-' . YII_ENV . '.php');
+$envConfig = require_once __DIR__ . '/config-' . YII_ENV . '.php';
 
 // 合并配置
-$config['params'] = array_merge($config['params'], $envConfig['params']);
+$config['params']     = array_merge($config['params'], $envConfig['params']);
 $config['components'] = array_merge($config['components'], $envConfig['components']);
 
 

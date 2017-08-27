@@ -47,7 +47,9 @@ $user = Yii::$app->user->identity;
                     <h4><?= DateUtil::getWeekByTime(time()) ?></h4>
                     <p><?= DateUtil::showFormatDate(time(), 'Y年m月d日') ?></p>
                 </div>
-                <ul class="nav_container" id="side-menu" style="height:calc(100% - 154px);overflow-y:auto;">
+                <ul class="nav_container"
+                    id="side-menu"
+                    style="height:calc(100% - 154px);overflow-y:auto;">
                     <?= $this->render('menu', ['menu' => $menu]) ?>
                 </ul>
             </div>
@@ -62,7 +64,9 @@ $user = Yii::$app->user->identity;
                 </button>
                 <nav class="page-tabs J_menuTabs">
                     <div class="page-tabs-content">
-                        <a href="javascript:;" class="active J_menuTab" data-id="<?= Url::toRoute('site/home') ?>">首页</a>
+                        <a href="javascript:void(0);"
+                           class="active J_menuTab"
+                           data-id="<?= Url::toRoute('site/home') ?>">首页</a>
                     </div>
                 </nav>
                 <button class="roll-nav roll-right J_tabRight">
@@ -85,8 +89,8 @@ $user = Yii::$app->user->identity;
                     name="iframe0"
                     width="100%"
                     height="100%"
-                    src="<?= Url::toRoute('site/home') ?>"
                     frameborder="0"
+                    src="<?= Url::toRoute('site/home') ?>"
                     data-id="<?= Url::toRoute('site/home') ?>">
                 </iframe>
             </div>
