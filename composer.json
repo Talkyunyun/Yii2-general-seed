@@ -7,7 +7,10 @@
     "require": {
         "php" : ">=5.4.0",
         "yiisoft/yii2" : "~2.0.6",
-        "monolog/monolog": "^1.22"
+        "monolog/monolog": "^1.22",
+        "workerman/workerman": "^3.5",
+        "owner888/phpspider": "^2.0",
+        "phpoffice/phpexcel": "^1.8"
     },
     "require-dev" : {
         "yiisoft/yii2-debug": "~2.0.0",

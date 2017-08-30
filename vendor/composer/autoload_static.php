@@ -20,9 +20,17 @@ class ComposerStaticInit5b4fa67676f4936635b8a6b533245934
             'yii\\bootstrap\\' => 14,
             'yii\\' => 4,
         ),
+        'p' => 
+        array (
+            'phpspider\\' => 10,
+        ),
         'c' => 
         array (
             'cebe\\markdown\\' => 14,
+        ),
+        'W' => 
+        array (
+            'Workerman\\' => 10,
         ),
         'P' => 
         array (
@@ -63,9 +71,17 @@ class ComposerStaticInit5b4fa67676f4936635b8a6b533245934
         array (
             0 => __DIR__ . '/..' . '/yiisoft/yii2',
         ),
+        'phpspider\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/owner888/phpspider',
+        ),
         'cebe\\markdown\\' => 
         array (
             0 => __DIR__ . '/..' . '/cebe/markdown',
+        ),
+        'Workerman\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/workerman/workerman',
         ),
         'Psr\\Log\\' => 
         array (
@@ -82,6 +98,13 @@ class ComposerStaticInit5b4fa67676f4936635b8a6b533245934
     );
 
     public static $prefixesPsr0 = array (
+        'P' => 
+        array (
+            'PHPExcel' => 
+            array (
+                0 => __DIR__ . '/..' . '/phpoffice/phpexcel/Classes',
+            ),
+        ),
         'H' => 
         array (
             'HTMLPurifier' => 

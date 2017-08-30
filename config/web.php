@@ -14,7 +14,7 @@ $config = [
     'controllerNamespace'=> 'app\controllers',
 
     // 公共的参数
-    'params' => require(__DIR__ . '/params.php'),
+    'params' => require_once __DIR__ . '/params.php',
 
     // 公共组件
     'components' => [
@@ -34,7 +34,8 @@ $config = [
         ],
         'urlManager' => [
             'enablePrettyUrl' => true,
-            'showScriptName'  => false
+            'showScriptName'  => false,
+            'rules' => require_once __DIR__ . '/routes.php'
         ],
         'log'     => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
