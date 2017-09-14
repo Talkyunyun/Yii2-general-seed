@@ -1,8 +1,12 @@
 <?php
+/**
+ * 节点表
+ * @author: Gene
+ */
+
 namespace app\models\AdminUser;
 
 use yii\db\ActiveRecord;
-
 
 class Node extends ActiveRecord {
 
@@ -92,7 +96,7 @@ class Node extends ActiveRecord {
 
             if ($son) {
                 $data[$key]['icon'] = 'fa fa-folder';
-                $data[$key]['children'] = self::getTreeMenu($row['id'], 1, $roleNodes);
+                $data[$key]['children'] = self::getTreeMenu($row['id'], $roleNodes);
             } else {
                 $data[$key]['icon'] = 'fa fa-file-text-o';
             }
@@ -121,7 +125,7 @@ class Node extends ActiveRecord {
      * @return array
      */
     public static function getMenuAllChildById($id) {
-        $ids = [];
+        $ids  = [];
         $data = self::find()
             ->select('id, pid')
             ->where([
@@ -129,9 +133,9 @@ class Node extends ActiveRecord {
                 'can_del' => 1
             ])->asArray()->all();
         if(!empty($data)){
-            foreach($data as $row) {
-                $ids[] = $row['id'];
-                $result = self::getMenuAllChildById($row['id']);
+            foreach($data as $item) {
+                $ids[]  = $item['id'];
+                $result = self::getMenuAllChildById($item['id']);
                 if (count($result) > 0) {
                     $ids = array_merge($ids, $result);
                 }

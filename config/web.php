@@ -44,7 +44,7 @@ $config = [
                     'class'   => 'yii\log\FileTarget',
                     'levels'  => ['error', 'warning', 'trace' ,'info'],
                     'logVars' => [],
-                    'logFile' => '@app/runtime/logs/'.date('Y-m-d').'.log'
+                    'logFile' => '@app/runtime/logs/run_'.date('Y-m-d').'.log'
                 ]
             ],
         ]

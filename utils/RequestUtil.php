@@ -27,6 +27,10 @@ class RequestUtil {
         curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.172 Safari/537.22');
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 
+        // 不验证ssl
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+
         if ($isPost) {// POST请求
             if ($isJson) {// 是否为json发送
                 $params = json_encode($params);

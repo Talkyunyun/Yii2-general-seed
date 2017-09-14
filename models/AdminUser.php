@@ -23,7 +23,9 @@ class AdminUser extends ActiveRecord implements IdentityInterface, RateLimitInte
 
     public function rules() {
         return [
-            [['username', 'email', 'person'], 'required', 'message' => '{attribute}不能为空']
+            [['username', 'email', 'person'], 'required', 'message' => '{attribute}不能为空'],
+            ['status', 'in', 'range' => [1, 0], 'message' => '非法的状态值'],
+            [['access_token', 'auth_key', 'email', 'mobile', 'person'], 'safe']
         ];
     }
 
@@ -58,6 +60,26 @@ class AdminUser extends ActiveRecord implements IdentityInterface, RateLimitInte
                 'username' => $username,
                 'status'   => 1
             ]);
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+
+    /**
+     * 根据ID获取用户信息
+     * @param $id
+     */
+    public static function getDataById($id, $fields = false) {
+        try {
+            $query = self::find()
+                ->where(['id' => $id]);
+
+            if ($fields !== false) {
+                $query->select($fields);
+            }
+
+            return $query->one();
         } catch (\Exception $e) {
             return false;
         }

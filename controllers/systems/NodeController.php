@@ -5,129 +5,134 @@
  */
 namespace app\controllers\systems;
 
-
 use app\controllers\BaseController;
 use app\models\AdminUser\Node;
 use app\models\AdminUser\Access;
-use yii\web\Response;
+use app\utils\ResponseUtil;
+use app\utils\Util;
 
 class NodeController extends BaseController {
 
     // 列表
     public function actionIndex() {
 
-        return $this->render($this->action->id);
+        return $this->render('index');
     }
 
     // 获取全部节点列表
     public function actionGetData() {
-        \Yii::$app->response->format = Response::FORMAT_JSON;
-
         $request = \Yii::$app->request;
+
         try {
-            $roleId = (int)$request->post('role_id', 0);
+            $roleNodes   = [];
+            $roleId = $request->post('role_id', 0);
             if (!empty($roleId)) {
-                $roleNode = Access::find()->where(['role_id' => $roleId])->all();
-                $roleNodes = [];
-                foreach ($roleNode as $row) {
-                    array_push($roleNodes, $row['node_id']);
+                $roleNode = Access::find()
+                    ->where(['role_id' => $roleId])
+                    ->asArray()->all();
+                foreach ($roleNode as $item) {
+                    array_push($roleNodes, $item['node_id']);
                 }
             }
 
-            return $this->sendRes('获取成功', Node::getTreeMenu(0, 1, $roleNodes), 0);
+            return ResponseUtil::success(Node::getTreeMenu(0, $roleNodes));
         } catch (\Exception $e) {
-            return $this->sendRes($e->getMessage());
+            $msg = $e->getCode() == 0 ? '获取失败' : $e->getMessage();
+
+            return ResponseUtil::error($msg);
         }
     }
 
     // 根据ID获取信息
     public function actionGetInfo() {
-        \Yii::$app->response->format = Response::FORMAT_JSON;
         $request = \Yii::$app->request;
 
         try {
-            $id = (int)$request->post('id', 0);
+            $id = $request->post('id', 0);
             $result = Node::getDataById($id);
-            $this->msg['data'] = $result;
 
-            return $this->msg;
+            return ResponseUtil::success($result);
         } catch (\Exception $e) {
-            return $this->sendError(1001, $e->getMessage());
+            $msg = $e->getCode() == 0 ? '获取失败' : $e->getMessage();
+
+            return ResponseUtil::error($msg);
         }
     }
 
     // 删除
     public function actionDel() {
-        \Yii::$app->response->format = Response::FORMAT_JSON;
         $request = \Yii::$app->request;
 
         try {
             if (!$request->isPost) {
-                throw new \Exception('非法访问');
+                throw new \Exception('非法访问', 1000);
             }
 
-            $id = (int)$request->post('id', 0);
+            $id = $request->post('id', 0);
             if (empty($id)) {
-                throw new \Exception('请选择需要删除的节点');
+                throw new \Exception('请选择需要删除的节点', 1001);
             }
-            $model = Node::find()->where([
-                'id'      => $id,
-                'can_del' => 1
-            ])->one();
+            $model = Node::find()
+                ->where([
+                    'id'      => $id,
+                    'can_del' => 1
+                ])->asArray()->one();
             if (empty($model)) {
-                throw new \Exception('该节点或者菜单不允许删除');
+                throw new \Exception('该节点或者菜单不允许删除', 1002);
             }
-            $ids = Node::getMenuAllChildById($id);
+            $ids   = Node::getMenuAllChildById($id);
             $ids[] = $id;
+
             # 1. 删除当前分类对应的所有子分类
             # 2. 删除在menu_id 对应到权限中的所有menu_id
-            $db = \Yii::$app->auth_db;
+            $db = \Yii::$app->db;
             $dbTrans = $db->beginTransaction();
             try {
                 foreach ($ids as $id) {
                     $num = $db->createCommand()
-                        ->delete(Node::tableName(), 'can_del=1 AND app=1 AND id=' . (int)$id)
+                        ->delete(Node::tableName(), 'can_del=1 AND id=:id', [
+                            ':id' => $id
+                        ])
                         ->execute();
                     if (empty($num)) {
-                        throw new \Exception('删除失败');
+                        throw new \Exception('删除失败', 1005);
                     }
                 }
-
                 $dbTrans->commit();
-                $this->msg['data'] = '删除成功';
 
-                return $this->msg;
+                return ResponseUtil::success('删除成功');
             } catch (\Exception $e) {
                 $dbTrans->rollBack();
 
-                throw new \Exception('删除失败');
+                throw new \Exception('删除失败', 1004);
             }
         } catch (\Exception $e) {
-            return $this->sendError(1001, $e->getMessage());
+            $msg = $e->getCode() == 0 ? '删除失败' : $e->getMessage();
+
+            return ResponseUtil::error($msg);
         }
     }
 
     // 添加
     public function actionCreate() {
         $request = \Yii::$app->request;
-        $pid = (int)$request->get('pid', 0);
+        $pid = $request->get('pid', 0);
 
-        return $this->render($this->action->id, [
+        return $this->render('create', [
             'pid' => $pid
         ]);
     }
 
     // 保存
     public function actionSave() {
-        \Yii::$app->response->format = Response::FORMAT_JSON;
         $request = \Yii::$app->request;
 
         try {
             if (!$request->isPost) {
-                throw new \Exception('非法访问');
+                throw new \Exception('非法访问', 1001);
             }
             $data = $request->post();
-            $id = (int)$data['id'];
+            $id   = (int)$data['id'];
             if (empty($id)) {// 添加
                 $model = new Node();
                 $model->setScenario('create');
@@ -138,16 +143,17 @@ class NodeController extends BaseController {
 
             $model->setAttributes($data);
             if (!$model->validate()) {
-                throw new \Exception(getModelError($model->errors));
+                throw new \Exception(Util::getModelError($model->errors), 1003);
             }
             if (!$model->save()) {
-                throw new \Exception('保存失败');
+                throw new \Exception('保存失败', 1003);
             }
-            $this->msg['data'] = '保存成功';
 
-            return $this->msg;
+            return ResponseUtil::success('保存成功');
         } catch (\Exception $e) {
-            return $this->sendError(1001, $e->getMessage());
+            $msg = $e->getCode() == 0 ? '保存失败' : $e->getMessage();
+
+            return ResponseUtil::error($msg);
         }
     }
 }

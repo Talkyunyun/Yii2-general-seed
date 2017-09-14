@@ -5,13 +5,12 @@
  */
 namespace app\controllers\systems;
 
-
 use app\controllers\BaseController;
 use app\models\AdminUser\Access;
 use app\models\AdminUser\Role;
 use app\models\AdminUser\RoleUser;
+use app\utils\ResponseUtil;
 use yii\data\Pagination;
-use yii\web\Response;
 use app\utils\Util;
 
 class RoleController extends BaseController {
@@ -41,7 +40,7 @@ class RoleController extends BaseController {
             ->orderBy('id desc')
             ->all();
 
-        return $this->render($this->action->id, [
+        return $this->render('index', [
             'result'    => $result,
             'page'      => $page,
             'total'     => $total,
@@ -52,17 +51,16 @@ class RoleController extends BaseController {
 
     // 删除
     public function actionDel() {
-        \Yii::$app->response->format = Response::FORMAT_JSON;
         $request = \Yii::$app->request;
 
         try {
             if (!$request->isPost) {
-                throw new \Exception('没有发现该页面');
+                throw new \Exception('没有发现该页面', 1000);
             }
 
             $id = (int)$request->post('id', 0);
             if (empty($id)) {
-                throw new \Exception('请选择需要删除的角色');
+                throw new \Exception('请选择需要删除的角色', 1001);
             }
             // 删除角色
             Role::deleteAll('id=:id', [':id' => $id]);
@@ -73,11 +71,11 @@ class RoleController extends BaseController {
             // 删除用户角色
             RoleUser::deleteAll('role_id=:role_id', [':role_id'=>$id]);
 
-            $this->msg['data'] = '删除成功';
-
-            return $this->msg;
+            return ResponseUtil::success('删除成功');
         } catch (\Exception $e) {
-            return $this->sendError(1001, $e->getMessage());
+            $msg = $e->getCode() == 0 ? '删除失败' : $e->getMessage();
+
+            return ResponseUtil::error($msg);
         }
     }
 
@@ -85,16 +83,16 @@ class RoleController extends BaseController {
     // 修改信息
     public function actionUpdate() {
         $request = \Yii::$app->request;
-        $id = (int)$request->get('id', 0);
+        $id = $request->get('id', 0);
 
         $result = Role::find()->where([
             'id' => $id
         ])->one();
         if (empty($result)) {
-            alert('没有该角色信息', null, 2, true);
+            Util::alert('没有该角色信息');
         }
 
-        return $this->render($this->action->id, [
+        return $this->render('update', [
             'result' => $result
         ]);
     }
@@ -102,18 +100,17 @@ class RoleController extends BaseController {
     // 添加
     public function actionCreate() {
 
-        return $this->render($this->action->id);
+        return $this->render('create');
     }
 
     // 保存
     public function actionSave() {
-        \Yii::$app->response->format = Response::FORMAT_JSON;
         $request = \Yii::$app->request;
 
         $dbTrans = \Yii::$app->db->beginTransaction();
         try {
             if (!$request->isPost) {
-                throw new \Exception('非法访问');
+                throw new \Exception('非法访问', 1001);
             }
             $data = $request->post();
             $id = (int)$data['id'];
@@ -126,14 +123,14 @@ class RoleController extends BaseController {
             $model->remark = $data['remark'];
             $model->status = (int)$data['status'];
             if (!$model->validate()) {
-                throw new \Exception(Util::getModelError($model->errors));
+                throw new \Exception(Util::getModelError($model->errors), 1001);
             }
 
             if ($model->save()) {
                 if (!empty($data['nodes'])) {
                     $nodes = explode(',', $data['nodes']);
                     if (!is_array($nodes) || count($nodes) < 1) {
-                        throw new \Exception('保存失败');
+                        throw new \Exception('保存失败', 1002);
                     }
                     $roleId = $model->getAttribute('id');
                     // 1.删除旧权限
@@ -151,14 +148,46 @@ class RoleController extends BaseController {
                 }
                 $dbTrans->commit();
 
-                return $this->sendRes('保存成功', '保存成功', 0);
+                return ResponseUtil::success('保存成功');
             }
 
-            throw new \Exception('保存失败');
+            throw new \Exception('保存失败', 1001);
         } catch (\Exception $e) {
             $dbTrans->rollBack();
+            $msg = $e->getCode() == 0 ? '保存失败' : $e->getMessage();
 
-            return $this->sendRes($e->getMessage());
+            return ResponseUtil::error($msg);
+        }
+    }
+
+    // 开关
+    public function actionOnOff() {
+        $request = \Yii::$app->request;
+
+        try {
+            if (!$request->isPost) throw new \Exception('非法访问', 1001);
+
+            $id = $request->post('id', false);
+            $model = Role::findOne($id);
+            if (empty($model)) {
+                throw new \Exception('不存在该记录信息', 1001);
+            }
+            if ($model->status == 1) {
+                $status = 0;
+            } else {
+                $status = 1;
+            }
+
+            $model->status = $status;
+            if ($model->save()) {
+                return ResponseUtil::success(1);
+            }
+
+            throw new \Exception('删除失败', 1001);
+        } catch (\Exception $e) {
+            $msg = $e->getCode() == 0 ? '操作失败' : $e->getMessage();
+
+            return ResponseUtil::error($msg);
         }
     }
 }

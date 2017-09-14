@@ -3,14 +3,16 @@
  * 管理员管理
  * @author: Gene
  */
+
 namespace app\controllers\systems;
 
 use app\controllers\BaseController;
 use app\models\AdminUser;
 use app\models\AdminUser\Role;
 use app\models\AdminUser\RoleUser;
+use app\utils\ResponseUtil;
+use app\utils\Util;
 use yii\data\Pagination;
-use yii\web\Response;
 
 class UserController extends BaseController {
 
@@ -86,7 +88,7 @@ class UserController extends BaseController {
         }
 
         return $this->render($this->action->id, [
-            'data' => $data,
+            'result' => $data,
             'page' => $page,
             'total'=> $total,
             'statusList' => AdminUser::getStatusList(),
@@ -101,51 +103,17 @@ class UserController extends BaseController {
         ]);
     }
 
-    /**
-     * 控制用户失效和生效
-     * @return array
-     */
-    public function actionState() {
-        \Yii::$app->response->format = Response::FORMAT_JSON;
-        $request = \Yii::$app->request;
-
-        try {
-            $id    = (int)$request->post('id', 0);
-            $type  = (int)$request->post('type', 0);
-            $model = AdminUser::find()
-                ->where('id=:id AND username<>"admin" AND status<>10', [':id' => $id])
-                ->one();
-            if (empty($model)) {
-                throw new \Exception('该用户不允许操作');
-            }
-
-            if ($type == 1) {// 生效
-                $model->status = 1;
-            } else {
-                $model->status = 0;
-            }
-            $model->updated_at = time();
-            if ($model->save()) {
-                $this->msg['data'] = '更新成功';
-
-                return $this->msg;
-            }
-
-            throw new \Exception('更新失败');
-        } catch (\Exception $e) {
-            return $this->sendError(1001, $e->getMessage());
-        }
-    }
 
     // 添加
     public function actionCreate() {
         // 获取所有角色
-        $roles = Role::find()->select('id, name')
+        $roles = Role::find()
+            ->select('id, name')
             ->where(['status' => 1])
+            ->asArray()
             ->all();
 
         return $this->render($this->action->id, [
-            'status' => AdminUser::getStatusList(),
             'roles' => $roles
         ]);
     }
@@ -153,10 +121,11 @@ class UserController extends BaseController {
     // 修改
     public function actionUpdate() {
         $request = \Yii::$app->request;
-        $id = (int)$request->get('id', 0);
+
+        $id     = $request->get('id', 0);
         $result = AdminUser::getDataById($id);
         if (empty($result)) {
-            alert('没有该用户信息', null, 2, true);
+            Util::alert('没有该用户信息');
         }
 
         // 获取所有角色
@@ -169,7 +138,6 @@ class UserController extends BaseController {
 
         return $this->render($this->action->id, [
             'result'    => $result,
-            'status'    => AdminUser::getStatusList(),
             'roles'     => $roles,
             'userRoles' => $userRoles
         ]);
@@ -177,35 +145,30 @@ class UserController extends BaseController {
 
     // 保存
     public function actionSave() {
-        \Yii::$app->response->format = Response::FORMAT_JSON;
         $request = \Yii::$app->request;
 
         $dbTrans = \Yii::$app->db->beginTransaction();
         try {
             $data = $request->post();
-            $id = (int)$data['id'];
+            $id   = (int)$data['id'];
+            $now  = time();
             if (empty($id)) {// 添加
                 $model = new AdminUser();
-                $model->created_at = time();
-                $model->created_at_datetime = date('Y-m-d H:i:s');
-                $model->password_hash = AdminUser::getNewPassword($data['password']);
-                $model->setScenario('create');
+                $model->create_time   = $now;
+                $model->password = AdminUser::getNewPassword($data['password']);
             } else {// 修改
                 $model = AdminUser::findOne($id);
                 if (!empty($data['password'])) {
-                    $model->password_hash = AdminUser::getNewPassword($data['password']);
+                    $model->password = AdminUser::getNewPassword($data['password']);
                 }
-                $model->setScenario('update');
             }
-            $model->attributes = $data;
-            $model->updated_at = time();
-            $model->recom_code = $data['recom_code'];
-            $model->updated_at_datetime = date('Y-m-d H:i:s');
+            $model->attributes  = $data;
+            $model->update_time = $now;
             if (!$model->validate()) {
-                throw new \Exception(getModelError($model->errors));
+                throw new \Exception(Util::alert($model->errors), 1001);
             }
             if (!$model->save()) {
-                throw new \Exception('保存失败');
+                throw new \Exception('保存失败', 1002);
             }
             $roles = $data['roles'];
             if (!empty($roles)) {
@@ -221,21 +184,37 @@ class UserController extends BaseController {
                         $newRole[$key][0] = $row;
                         $newRole[$key][1] = $uid;
                     }
-                    $authDb = \Yii::$app->auth_db;
+                    $authDb = \Yii::$app->db;
                     if (!$authDb->createCommand()
                         ->batchInsert(RoleUser::tableName(), ['role_id', 'user_id'], $newRole)
                         ->execute()) {
-                        throw new \Exception('保存失败');
+                        throw new \Exception('保存失败', 1003);
                     }
                 }
             }
             $dbTrans->commit();
-            $this->msg['data'] = '保存成功';
 
-            return $this->msg;
+            return ResponseUtil::success('保存成功');
         } catch (\Exception $e) {
             $dbTrans->rollBack();
-            return $this->sendError(1001, $e->getMessage());
+            $msg = $e->getCode() == 0 ? '保存失败' : $e->getMessage();
+
+            return ResponseUtil::error($e->getMessage());
         }
+    }
+
+
+
+    // 修改密码
+    public function actionPassword() {
+
+        echo 3;
+    }
+
+
+    // 查看个人信息
+    public function actionView() {
+
+        echo 33;
     }
 }

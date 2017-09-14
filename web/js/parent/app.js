@@ -3,6 +3,7 @@
  * @author: Gene
  * @constructor
  */
+var layer, form, laydate;
 function APP() {
     var self = this;
     this.name = '阿凡达物流管理系统';
@@ -74,4 +75,43 @@ APP.prototype.openPage = function(param) {
     layer.open(param);
 }
 
-var APP = new APP();
+/**
+ * 打开新页面
+ * @param param
+ */
+APP.prototype.openWin = function(param) {
+    var newParam = new Object();
+    if (typeof param != 'object') {
+        throw '参数必须是一个对象';
+    }
+
+    if (typeof param.title == 'undefined') param.title = '新窗口';
+    if (typeof param.url == 'undefined') param.url = '';
+    if (typeof param.width == 'undefined') param.width = '80%';
+    if (typeof param.height == 'undefined') param.height = '90%';
+    if (typeof param.callback != 'undefined') {
+        newParam.btn = ['确认', '取消'];
+        newParam.yes = function(index, res) {
+            param.callback(index, res);
+        };
+    }
+    newParam.type = 2;
+    newParam.anim = 0;
+    newParam.shade = 0.8;
+    newParam.title = param.title;
+    newParam.area = [param.width, param.height];
+    newParam.content = param.url;
+
+    this.openPage(newParam);
+}
+
+
+$(function() {
+    window.app = new APP();
+});
+
+layui.use(['layer'], function() {
+    form    = layui.form;
+    layer   = layer;
+    laydate = layui.laydate;
+});

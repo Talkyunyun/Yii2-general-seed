@@ -1,76 +1,72 @@
 <?php
+/**
+ * 修改角色
+ * @author: Gene
+ */
 
 use yii\helpers\Url;
 $this->title = '编辑角色';
 ?>
+<link href="/js/plugins/jsTree/themes/default/style.min.css" rel="stylesheet">
 <style>
-    body{background: #fff !important;}
-    legend {
-        display: inherit;
-        width: inherit;
-        padding: 0;
-        margin-bottom: 20px;
-        font-size: 21px;
-        line-height: inherit;
-        color: #333;
-        border: 0;
+    .layui-form-label {
+        float: left;
+        display: block;
+        padding: 9px 15px;
+        width: 105px;
+        font-weight: 400;
+        text-align: right;
     }
 </style>
-<link href="/js/plugins/jsTree/themes/default/style.min.css" rel="stylesheet">
-<div class="row">
-    <form class="form-horizontal">
-        <div class="col-sm-12">
-            <div class="layui-tab">
-                <ul class="layui-tab-title">
-                    <li class="layui-this">基本信息</li>
-                    <li>权限分配</li>
-                </ul>
-                <div class="layui-tab-content">
-                    <div class="layui-tab-item layui-show">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label>角色名称</label>
-                                <input type="text" id="name"
-                                       value="<?= $result['name'] ?>"
-                                       class="form-control"
-                                       placeholder="角色名称">
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label>描述</label>
-                                <textarea class="form-control"
-                                          id="remark"
-                                          placeholder="备注或者描述"><?= $result['remark'] ?></textarea>
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label>状态</label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="status" value="1"
-                                        <?php if ($result['status'] == 1) {
-                                            echo 'checked';
-                                        } ?>
-                                    > 开启
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="status" value="0"
-                                        <?php if ($result['status'] == 0) {
-                                            echo 'checked';
-                                        } ?>
-                                    > 关闭
-                                </label>
-                            </div>
-                        </div>
+<form class="form-horizontal layui-form">
+    <div class="layui-tab">
+        <ul class="layui-tab-title">
+            <li class="layui-this">基本信息</li>
+            <li>权限分配</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">角色名称</label>
+                    <div class="layui-input-block">
+                        <input type="text"
+                               value="<?= $result['name'] ?>"
+                               id="name" class="form-control" placeholder="角色名称">
                     </div>
+                </div>
 
-                    <div class="layui-tab-item" id="menuBox"></div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">描述</label>
+                    <div class="layui-input-block">
+                        <textarea class="form-control" id="remark" placeholder="备注或者描述"><?= $result['remark'] ?></textarea>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">状态</label>
+                    <div class="layui-input-block">
+                        <input type="radio"
+                               <?php
+                                if ($result['status'] == 1) {
+                                    echo 'checked';
+                                }
+                               ?>
+                               name="status" class="form-control" title="开启" value="1" />
+                        <input type="radio"
+                               <?php
+                                if ($result['status'] == 0) {
+                                    echo 'checked';
+                                }
+                               ?>
+                               name="status" class="form-control" title="关闭" value="0" />
+                    </div>
                 </div>
             </div>
+
+            <div class="layui-tab-item" id="menuBox"></div>
         </div>
-    </form>
-</div>
+    </div>
+</form>
 <script src="/js/plugins/jsTree/jstree.min.js"></script>
 <script>
     var nodes = '';
@@ -84,10 +80,10 @@ $this->title = '编辑角色';
         data.nodes = nodes;
         data.id = "<?= $result['id'] ?>";
 
-        post("<?= Url::toRoute('systems/role/save') ?>", data, function(res) {
+        app.post("<?= Url::toRoute('systems/role/save') ?>", data, function(res) {
             if (res !== false) {
-                APP.parent.APP.showMsg(res, 'success');
-                APP.parent.layer.close(index);
+                app.showMsg(res, 'success');
+                app.parent.layer.close(index);
 
                 callback(true);
             }
@@ -97,9 +93,10 @@ $this->title = '编辑角色';
     }
 
     $(function() {
-        APP.post("<?= Url::toRoute('systems/node/get-data') ?>", {
+        app.post("<?= Url::toRoute('systems/node/get-data') ?>", {
             role_id : "<?= $result['id'] ?>"
         }, function(res) {
+            console.log(res)
             if (res !== false) {
                 $("#menuBox").jstree({
                     plugins : ['checkbox'],

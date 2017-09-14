@@ -1,100 +1,95 @@
 <?php
-
+/**
+ * 添加节点
+ * @author: Gene
+ */
 use yii\helpers\Url;
 
 $this->title = '添加菜单';
 ?>
 <style>
-    body{background: #fff !important;}
+
 </style>
-<div class="row">
-    <form class="form-horizontal" method="post" action="">
-        <p style="padding:10px; 0" class="bg-info">说明:<br>1、url为域名后面访问的路径地址,如:http://www.afd56.com/role/add,则url地址为:/role/add;<br>2、是否菜单说明:选择是,则将会作为菜单来显示<br>3、字体图标,请输入Font Awesome官方提供的图标库,如:eye</p>
+<div class="col-md-12 animated fadeIn node_edit">
+    <div class="col-md-12" style="margin-bottom:20px;margin-top:20px;">
+        <div class="bg-info" style="padding:10px;">
+            <b>说明：</b>
+            <p>1、url为域名后面访问的路径地址,如:http://www.afd56.com/role/add,则url地址为:/role/add;</p>
+            <p>2、是否菜单说明:选择是,则将会作为菜单来显示</p>
+            <p>3、字体图标,请输入Font Awesome官方提供的图标库,如:eye</p>
+        </div>
+    </div>
 
-        <div class="col-md-5">
-            <div class="form-group">
-                <label for="name" class="col-md-3 control-label">名称</label>
-                <div class="col-md-9">
-                    <input type="text" class="form-control" id="name" placeholder="名称">
+    <form class="form-horizontal layui-form" method="post">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="name" class="form-control" placeholder="名称" />
                 </div>
             </div>
-        </div>
-        <div class="col-md-5">
-            <div class="form-group">
-                <label for="url" class="col-md-3 control-label">url地址</label>
-                <div class="col-md-9">
-                    <input type="text" class="form-control" id="url" placeholder="url地址">
-                </div>
-            </div>
-        </div>
-        <div class="col-md-5">
-            <div class="form-group">
-                <label for="sort" class="col-md-3 control-label">排序</label>
-                <div class="col-md-9">
-                    <input type="text" class="form-control" id="sort" value="0" placeholder="排序">
-                </div>
-            </div>
-        </div>
-        <div class="col-md-5">
-            <div class="form-group">
-                <label for="sort" class="col-md-3 control-label">字体图标</label>
-                <div class="col-md-9">
-                    <input type="text" class="form-control" id="font_icon" placeholder="字体图标">
-                </div>
-            </div>
-        </div>
-        <div class="col-md-5">
-            <div class="form-group">
-                <label for="sort_order" class="col-md-3 control-label">是否菜单</label>
-                <div class="col-md-9">
-                    <label class="radio-inline">
-                        <input type="radio" name="is_menu" checked value="1"> 是
-                    </label>
-                    <label class="radio-inline">
-                        <input type="radio" name="is_menu" value="0"> 否
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-5">
-            <div class="form-group">
-                <label for="sort_order" class="col-md-3 control-label">状态</label>
-                <div class="col-md-9">
-                    <label class="radio-inline">
-                        <input type="radio" name="status" checked value="1"> 开启
-                    </label>
-                    <label class="radio-inline">
-                        <input type="radio" name="status" value="0"> 关闭
-                    </label>
+            <div class="layui-inline">
+                <label class="layui-form-label">url地址</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="url" class="form-control" placeholder="url地址,如:/role/index" />
                 </div>
             </div>
         </div>
 
-        <div class="col-md-12">
-            <button type="button" id="btn" class="btn btn-info">保存</button>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">排序</label>
+                <div class="layui-input-inline">
+                    <input type="number" value="0" id="sort" class="form-control" placeholder="排序" />
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">图标</label>
+                <div class="layui-input-inline">
+                    <input type="text" value="circle" id="font_icon" class="form-control" placeholder="字体图标" />
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">菜单</label>
+                <div class="layui-input-inline">
+                    <input type="radio" name="is_menu" class="form-control" title="是" value="1" checked />
+                    <input type="radio" name="is_menu" class="form-control" title="否" value="0" />
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-inline">
+                    <input type="radio" name="status" value="1" class="form-control" title="开启" checked />
+                    <input type="radio" name="status" value="0" class="form-control" title="关闭" />
+                </div>
+            </div>
         </div>
     </form>
 </div>
 
 <script>
-    $(function() {
-        $('#btn').click(function() {
-            var data = new Object();
-            data.name = $('#name').val();
-            data.url = $('#url').val();
-            data.sort = $('#sort').val();
-            data.is_menu = $("[name='is_menu']:checked").val();
-            data.status = $("[name='status']:checked").val();
-            data.font_icon = $('#font_icon').val();
-            data.pid = "<?= $pid ?>";
+    // 数据提交
+    function submit(index, callback) {
+        var data = new Object();
+        data.name = $('#name').val();
+        data.url = $('#url').val();
+        data.sort = $('#sort').val();
+        data.is_menu = $("[name='is_menu']:checked").val();
+        data.status = $("[name='status']:checked").val();
+        data.font_icon = $('#font_icon').val();
+        data.pid = "<?= $pid ?>";
 
-            APP.post("<?= Url::toRoute('systems/node/save') ?>", data, function(res) {
-                if (res !== false) {
-                    APP.parent.APP.showMsg(res, 'success');
+        app.post("<?= Url::toRoute('systems/node/save') ?>", data, function(res) {
+            if (res !== false) {
+                app.showMsg(res);
+                app.parent.layer.close(index);
+                callback(true);
+            }
 
-                    reloadParent();
-                }
-            });
+            callback(false);
         });
-    });
+    }
 </script>
