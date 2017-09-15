@@ -5,19 +5,15 @@
  */
 namespace app\controllers;
 
+use app\models\AdminUser;
 use Yii;
-use yii\web\Response;
-use yii\web\Controller;
 use app\utils\Util;
+use yii\web\Controller;
+use app\utils\ResponseUtil;
 use app\models\AdminUser\AdminUserLogin;
 use app\models\AdminUser\AdminUserLoginLog;
 
 class LoginController extends Controller {
-
-    // 发送相应
-    private function sendRes($msg = '操作失败', $code = 1001) {
-        return ['msg' => $msg, 'code' => $code];
-    }
 
     /**
      * 登录页面
@@ -29,7 +25,7 @@ class LoginController extends Controller {
         // 判断是否已登录
         $isGuest = Yii::$app->user->isGuest;
         if(!$isGuest) {
-            $this->redirect('/', 200);
+            return $this->redirect('/', 200);
         }
 
         return $this->render('index');
@@ -40,15 +36,16 @@ class LoginController extends Controller {
      * @return array
      */
     public function actionDo() {
-        Yii::$app->response->format = Response::FORMAT_JSON;
         $request = Yii::$app->request;
 
         try {
-            if (!$request->isPost) throw new \Exception('没有发现该页面', 1000);
+            if (!$request->isPost) {
+                throw new \Exception('没有发现该页面', 1000);
+            }
 
             $isGuest = Yii::$app->user->isGuest;
             if(!$isGuest) {
-                $this->sendRes('登录成功', 0);
+                return ResponseUtil::success('登录成功');
             }
             $model = new AdminUserLogin();
             $model->username = $request->post('username', false);
@@ -59,11 +56,11 @@ class LoginController extends Controller {
             // 记录登录日志
             AdminUserLoginLog::add();
 
-            return $this->sendRes('登录成功', 0);
+            return ResponseUtil::success('登录成功');
         } catch (\Exception $e) {
             $msg = $e->getCode() == 0 ? '登录失败' : $e->getMessage();
 
-            return $this->sendRes($msg);
+            return ResponseUtil::error($msg);
         }
     }
 
@@ -75,6 +72,6 @@ class LoginController extends Controller {
             Yii::$app->user->logout();
         }
 
-        $this->redirect('/login', 200);
+        return $this->redirect('/login', 200);
     }
 }

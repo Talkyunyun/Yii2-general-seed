@@ -32,7 +32,7 @@ APP.prototype.showMsg = function() {
             "debug": true,
             "progressBar": true,
             "positionClass": position,
-            "timeOut": "3000",
+            "timeOut": '3000',
         }
 
         switch (type) {

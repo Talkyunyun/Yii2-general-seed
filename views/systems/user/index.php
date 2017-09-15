@@ -26,13 +26,14 @@ $this->title = '管理员列表';
                 <thead>
                 <tr class="active">
                     <th class="text-center">#UID</th>
-                    <th class="text-center">用户名称</th>
+                    <th class="text-center">登录名</th>
                     <th class="text-center">姓名</th>
-                    <th class="text-center">手机号码</th>
-                    <th class="text-center">邮箱地址</th>
+                    <th class="text-center">联系号码</th>
+                    <th class="text-center">联系邮箱</th>
+                    <th class="text-center">生日</th>
                     <th class="text-center">角色</th>
                     <th class="text-center">状态</th>
-                    <th class="text-center">创建时间</th>
+                    <th class="text-center">添加时间</th>
                     <th class="text-center">更新时间</th>
                     <th class="text-center">操作</th>
                 </tr>
@@ -47,21 +48,22 @@ $this->title = '管理员列表';
                         <tr>
                             <td class="text-center"><?= Html::encode($item['id']) ?></td>
                             <td class="text-center"><?= Html::encode($item['username']) ?></td>
-                            <td class="text-center"><?= Html::encode($item['person']) ?></td>
-                            <td class="text-center"><?= Html::encode($item['mobile']) ?></td>
+                            <td class="text-center"><?= Html::encode($item['real_name']) ?></td>
+                            <td class="text-center"><?= Html::encode($item['phone']) ?></td>
                             <td class="text-center"><?= Html::encode($item['email']) ?></td>
+                            <td class="text-center"><?= Html::encode($item['birth_date']) ?></td>
                             <td class="text-center">
-                                <?php foreach ($item['roles'] as $r) { ?>
-                                    <p><?= $r['name'] ?></p>
+                                <?php if ($item['username'] == 'admin') { ?>
+                                    <span>超级管理员</span>
+                                <?php } else { ?>
+                                    <?php foreach ($item['roles'] as $r) { ?>
+                                        <p><?= $r['name'] ?></p>
+                                    <?php } ?>
                                 <?php } ?>
                             </td>
                             <td class="text-center"><?= $statusList[$item['status']] ?></td>
-                            <td class="text-center">
-                                <?= DateUtil::showFormatDate($item['create_time']) ?>
-                            </td>
-                            <td class="text-center">
-                                <?= DateUtil::showFormatDate($item['update_time']) ?>
-                            </td>
+                            <td class="text-center"><?= $item['created'] ?></td>
+                            <td class="text-center"><?= $item['updated'] ?></td>
                             <td class="text-center">
                                 <a href="#"
                                    class="open_save"

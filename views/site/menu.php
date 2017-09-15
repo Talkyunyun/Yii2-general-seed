@@ -7,13 +7,6 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 ?>
-<li class="active">
-    <a href="<?= Url::toRoute('site/home') ?>" class="J_menuItem active">
-        <i class="fa fa-home"></i>
-        <span class="nav-label">首页</span>
-    </a>
-</li>
-
 
 <?php foreach ($menu as $row) { ?>
     <li>

@@ -1,9 +1,4 @@
 <?php
-/**
- * 管理员管理
- * @author: Gene
- */
-
 namespace app\controllers\systems;
 
 use app\controllers\BaseController;
@@ -14,6 +9,11 @@ use app\utils\ResponseUtil;
 use app\utils\Util;
 use yii\data\Pagination;
 
+/**
+ * Class UserController 管理员管理
+ * @package app\controllers\systems
+ * @author Gene <https://github.com/Talkyunyun>
+ */
 class UserController extends BaseController {
 
 
@@ -26,13 +26,13 @@ class UserController extends BaseController {
 
         $status     = $request->get('status', 'all');
         $userName   = $request->get('username', false);
-        $mobile     = $request->get('mobile', false);
+        $phone      = $request->get('phone', false);
         $email      = $request->get('email', false);
         $dateType   = $request->get('dateType', false);
         $startDate  = $request->get('start_date', false);
         $endDate    = $request->get('end_date', false);
 
-        $where = 'status<>9';
+        $where = '';
         $bindParam = [];
         if ($status != 'all') {
             $where .= ' AND status=:status';
@@ -42,9 +42,9 @@ class UserController extends BaseController {
             $where .= ' AND username like :username';
             $bindParam[':username'] = "%{$userName}%";
         }
-        if (!empty($mobile)) {
-            $where .= ' AND mobile=:mobile';
-            $bindParam[':mobile'] = $mobile;
+        if (!empty($phone)) {
+            $where .= ' AND phone=:phone';
+            $bindParam[':phone'] = $phone;
         }
         if (!empty($email)) {
             $where .= ' AND email like :email';
@@ -62,7 +62,7 @@ class UserController extends BaseController {
                 $endTime = mktime(23, 59, 59, date('m'), date('d'), date('Y'));
             }
 
-            $where .= ' AND create_time>=:beginTime AND create_time<=:endTime';
+            $where .= ' AND created>=:beginTime AND created<=:endTime';
             $bindParam[':beginTime'] = $beginTime;
             $bindParam[':endTime'] = $endTime;
         }
@@ -79,7 +79,7 @@ class UserController extends BaseController {
         $data = $query
             ->offset($page->offset)
             ->limit($page->limit)
-            ->orderBy('create_time desc')
+            ->orderBy('created desc')
             ->asArray()
             ->all();
 
@@ -94,8 +94,7 @@ class UserController extends BaseController {
             'statusList' => AdminUser::getStatusList(),
             'status'    => $status,
             'username'  => $userName,
-            'code'      => $code,
-            'mobile'    => $mobile,
+            'phone'    => $phone,
             'email'     => $email,
             'dateType'  => $dateType,
             'startDate' => $startDate,
@@ -143,49 +142,73 @@ class UserController extends BaseController {
         ]);
     }
 
-    // 保存
+
+    /**
+     * 保存用户信息
+     * @return array
+     */
     public function actionSave() {
         $request = \Yii::$app->request;
 
-        $dbTrans = \Yii::$app->db->beginTransaction();
+        $db      = \Yii::$app->db;
+        $dbTrans = $db->beginTransaction();
         try {
-            $data = $request->post();
-            $id   = (int)$data['id'];
-            $now  = time();
+            if (!$request->isPost) {
+                throw new \Exception('非法访问', 1001);
+            }
+
+            $isPassword = false;
+            $data       = $request->post();
+            $password   = $request->post('password', false);
+            $id         = $request->post('id', 0);
             if (empty($id)) {// 添加
-                $model = new AdminUser();
-                $model->create_time   = $now;
-                $model->password = AdminUser::getNewPassword($data['password']);
+                $model      = new AdminUser();
+                $isPassword = true;
+
+                $model->setScenario('create');
             } else {// 修改
                 $model = AdminUser::findOne($id);
-                if (!empty($data['password'])) {
-                    $model->password = AdminUser::getNewPassword($data['password']);
+                if (empty($model)) {
+                    throw new \Exception('不存在该用户信息', 1002);
                 }
+                if (!empty($password)) $isPassword = true;
+
+                $model->setScenario('update');
             }
-            $model->attributes  = $data;
-            $model->update_time = $now;
+
+            // 检查是否是admin用户
+            if ($model->username == 'admin') {
+                unset($data['username']);
+                unset($data['roles']);
+                unset($data['status']);
+            }
+
+            $model->attributes = $data;
+            if (!empty($isPassword)) {
+                $model->password = AdminUser::getNewPassword($password);
+            }
+            $model->updated    = date('Y-m-d');
             if (!$model->validate()) {
-                throw new \Exception(Util::alert($model->errors), 1001);
+                throw new \Exception(Util::getModelError($model->errors), 1001);
             }
+
             if (!$model->save()) {
                 throw new \Exception('保存失败', 1002);
             }
-            $roles = $data['roles'];
+            $roles = $request->post('roles', false);
             if (!empty($roles)) {
                 $roles = explode(',', $roles);
                 if (is_array($roles) && count($roles) > 0) {
-                    $uid = $model->getAttribute('id');
                     // 1、删除旧角色
-                    RoleUser::deleteAll('user_id=:uid', [':uid' => $uid]);
+                    RoleUser::deleteAll('user_id=:uid', [':uid' => $model->id]);
 
                     // 2、添加新角色
                     $newRole = [];
                     foreach ($roles as $key=>$row) {
                         $newRole[$key][0] = $row;
-                        $newRole[$key][1] = $uid;
+                        $newRole[$key][1] = $model->id;
                     }
-                    $authDb = \Yii::$app->db;
-                    if (!$authDb->createCommand()
+                    if (!$db->createCommand()
                         ->batchInsert(RoleUser::tableName(), ['role_id', 'user_id'], $newRole)
                         ->execute()) {
                         throw new \Exception('保存失败', 1003);
@@ -199,7 +222,7 @@ class UserController extends BaseController {
             $dbTrans->rollBack();
             $msg = $e->getCode() == 0 ? '保存失败' : $e->getMessage();
 
-            return ResponseUtil::error($e->getMessage());
+            return ResponseUtil::error($msg);
         }
     }
 
@@ -207,14 +230,45 @@ class UserController extends BaseController {
 
     // 修改密码
     public function actionPassword() {
+        $request = \Yii::$app->request;
 
-        echo 3;
+        if ($request->isPost) {
+            try {
+                $oldPassword = $request->post('old_password', false);
+                $newPassword = $request->post('new_password', false);
+                $notPassword = $request->post('not_password', false);
+
+                $adminm = AdminUser::getCurrent();
+                $isOld = \Yii::$app->security->validatePassword($oldPassword, $adminm->password);
+                if (!$isOld) {
+                    throw new \Exception('旧密码输入错误', 1000);
+                }
+
+                if (empty($newPassword) || $newPassword != $notPassword) {
+                    throw new \Exception('确认密码输入不正确', 1001);
+                }
+                $adminm->setScenario('update_password');
+                $adminm->password = AdminUser::getNewPassword($newPassword);
+                $adminm->updated = date('Y-m-d H:i:s');
+                if ($adminm->save()) {
+                    return ResponseUtil::success('修改成功');
+                }
+
+                throw new \Exception('修改失败', 1002);
+            } catch (\Exception $e) {
+                $msg = $e->getCode() == 0 ? '修改失败' : $e->getMessage();
+
+                return ResponseUtil::error($e->getMessage());
+            }
+        }
+
+        return $this->render('edit_password');
     }
 
 
-    // 查看个人信息
+    // TODO 查看个人信息
     public function actionView() {
 
-        echo 33;
+        return $this->render('view_info');
     }
 }

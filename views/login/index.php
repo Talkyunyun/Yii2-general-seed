@@ -1,9 +1,16 @@
 <?php
+/**
+ * 登录页面
+ * @author: Gene
+ */
 
 use yii\helpers\Url;
 use yii\helpers\Html;
 $this->title = '欢迎登录 - ' . Yii::$app->params['app_name'];
+
+$version = Yii::$app->params['file_version'];
 ?>
+
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
 <head>
@@ -11,7 +18,7 @@ $this->title = '欢迎登录 - ' . Yii::$app->params['app_name'];
     <title><?= Html::encode($this->title) ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/login.min.css?v=<?= Yii::$app->params['file_version'] ?>" rel="stylesheet">
+    <link href="css/login.min.css?v=<?= $version ?>" rel="stylesheet">
 </head>
 <body class="signin">
 <div class="signinpanel">
@@ -50,7 +57,7 @@ $this->title = '欢迎登录 - ' . Yii::$app->params['app_name'];
     </div>
 </div>
 <script src="https://cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
-<script src="js/plugins/layer/layer.min.js"></script>
+<script src="js/plugins/layui/layui.all.js"></script>
 <script>
     $(function() {
         $(document).keypress(function(e) {

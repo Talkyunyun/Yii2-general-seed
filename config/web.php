@@ -62,7 +62,7 @@ $config['components'] = array_merge($config['components'], $envConfig['component
 // 只有正式环境才会显示友好的错误页面
 if (!YII_DEBUG) {
     $config['components']['errorHandler'] = [
-        'errorAction' => 'site/error'
+        'errorAction' => 'error/show'
     ];
 }
 

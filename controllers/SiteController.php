@@ -9,6 +9,12 @@ use app\models\AdminUser\Node;
 
 class SiteController extends BaseController {
 
+    // 默认首页
+    public function actionWelcome() {
+
+        return $this->render('welcome');
+    }
+
     /**
      * 框架主体
      * @return string
@@ -20,18 +26,4 @@ class SiteController extends BaseController {
             'menu' => Node::getMenus()
         ]);
     }
-
-    // 默认首页
-    public function actionHome() {
-        return $this->render('home', [
-            'isMobile'=>$isMobile
-        ]);
-    }
-
-    // 错误显示
-    public function actionError() {
-
-        return $this->render('error');
-    }
-
 }

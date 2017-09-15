@@ -1,22 +1,20 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: gene
- * Date: 2017/7/24
- * Time: 下午3:18
+ * 登录模型
+ * @author: Gene
  */
 
 namespace app\models\AdminUser;
-
 
 use yii\base\Model;
 use app\models\AdminUser;
 
 class AdminUserLogin extends Model {
-    public $username;
-    public $password;
+    public $username;// 接收用户名
+    public $password;// 接收密码
 
-    private $_admin_user;
+    // 用户对象
+    private $adminUser;
 
     // 验证规则
     public function rules() {
@@ -41,13 +39,13 @@ class AdminUserLogin extends Model {
      */
     public function validatePassword($attribute, $params){
         if (!$this->hasErrors()) {
-            $AdminUser = $this->getAdminUser();
-            if (empty($AdminUser)) {
+            $adminUser = $this->getAdminUser();
+            if (empty($adminUser)) {
                 $this->addError('username', '用户名或者密码错误');
                 return false;
             }
 
-            if (!$AdminUser->validatePassword($this->password)) {
+            if (!$adminUser->validatePassword($this->password)) {
                 $this->addError('password', '用户名或者密码错误');
                 return false;
             }
@@ -59,11 +57,11 @@ class AdminUserLogin extends Model {
      * @return static
      */
     public function getAdminUser(){
-        if($this->_admin_user === null){
-            $this->_admin_user = AdminUser::findByUsername($this->username);
+        if($this->adminUser === null){
+            $this->adminUser = AdminUser::findNormalByUserName($this->username);
         }
 
-        return $this->_admin_user;
+        return $this->adminUser;
     }
 
     /**
