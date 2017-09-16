@@ -1,11 +1,13 @@
 <?php
-/**
- * Excel 操作类
- * composer require phpoffice/phpexcel
- * @author: Gene
- */
 namespace app\utils;
 
+/**
+ * Excel工具类
+ * Class ExcelUtil
+ * 依赖安装：composer require phpoffice/phpexcel
+ * @package app\utils
+ * @author Gene <https://github.com/Talkyunyun>
+ */
 class ExcelUtil {
     // excel对象
     private $phpReader;

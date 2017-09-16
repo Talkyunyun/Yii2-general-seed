@@ -1,13 +1,14 @@
 <?php
-/**
- * 登录拦截器
- * @author: Gene
- */
-
 namespace app\filter;
 
 use yii\base\ActionFilter;
 
+/**
+ * 登录拦截器
+ * Class AuthFilter
+ * @package app\filter
+ * @author Gene <https://github.com/Talkyunyun>
+ */
 class AuthFilter extends ActionFilter {
     public $rules = [];
 

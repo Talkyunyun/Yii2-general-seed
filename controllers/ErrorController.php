@@ -1,13 +1,14 @@
 <?php
-/**
- * 错误处理显示
- * @author: Gene
- */
-
 namespace app\controllers;
 
 use yii\web\Controller;
 
+/**
+ * 错误控制器处理
+ * Class ErrorController
+ * @package app\controllers
+ * @author Gene <https://github.com/Talkyunyun>
+ */
 class ErrorController extends Controller {
 
     public function actionShow() {

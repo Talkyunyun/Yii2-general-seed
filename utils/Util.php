@@ -1,10 +1,12 @@
 <?php
-/**
- * 常用工具
- * @author: Gene
- */
 namespace app\utils;
 
+/**
+ * 其他工具类
+ * Class Util
+ * @package app\utils
+ * @author Gene <https://github.com/Talkyunyun>
+ */
 class Util {
     /**
      * 模型错误格式化

@@ -1,7 +1,7 @@
 <?php
 /**
  * 公共环境参数
- * @author: Gene
+ * @author Gene <https://github.com/Talkyunyun>
  */
 
 return [

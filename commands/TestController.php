@@ -1,10 +1,15 @@
 <?php
-
 namespace app\commands;
 
 use app\utils\LoggerUtil;
 use yii\console\Controller;
 
+/**
+ * 命令案例
+ * Class TestController
+ * @package app\commands
+ * @author Gene <https://github.com/Talkyunyun>
+ */
 class TestController extends Controller {
 
     // 访问: php yii test/index

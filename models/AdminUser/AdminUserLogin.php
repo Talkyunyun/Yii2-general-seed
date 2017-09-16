@@ -1,14 +1,16 @@
 <?php
-/**
- * 登录模型
- * @author: Gene
- */
-
 namespace app\models\AdminUser;
 
 use yii\base\Model;
 use app\models\AdminUser;
 
+/**
+ * Class AdminUserLogin 登录模型
+ * @package app\models\AdminUser
+ * @property string $username 用户名
+ * @property string $password 密码
+ * @author Gene <https://github.com/Talkyunyun>
+ */
 class AdminUserLogin extends Model {
     public $username;// 接收用户名
     public $password;// 接收密码

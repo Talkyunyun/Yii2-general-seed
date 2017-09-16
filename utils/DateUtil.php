@@ -1,10 +1,12 @@
 <?php
-/**
- * 日期工具类
- * @author: Gene
- */
 namespace app\utils;
 
+/**
+ * 日期工具类
+ * Class DateUtil
+ * @package app\utils
+ * @author Gene <https://github.com/Talkyunyun>
+ */
 class DateUtil {
     public static $weeks = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 

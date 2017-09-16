@@ -1,10 +1,12 @@
 <?php
-/**
- * 客户端工具类
- * @author: Gene
- */
 namespace app\utils;
 
+/**
+ * 客户端工具类
+ * Class ClientUtil
+ * @package app\utils
+ * @author Gene <https://github.com/Talkyunyun>
+ */
 class ClientUtil {
 
     /**

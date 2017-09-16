@@ -1,12 +1,14 @@
 <?php
-/**
- * YII2表操作
- * @author: Gene
- */
 namespace app\utils;
 
 use yii\helpers\ArrayHelper;
 
+/**
+ * Yii2表工具类
+ * Class TableUtil
+ * @package app\utils
+ * @author Gene <https://github.com/Talkyunyun>
+ */
 class TableUtil {
 
 

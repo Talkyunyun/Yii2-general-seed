@@ -1,7 +1,7 @@
 <?php
 /**
  * 本地开发环境
- * @author: Gene
+ * @author Gene <https://github.com/Talkyunyun>
  */
 
 return [

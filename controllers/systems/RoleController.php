@@ -1,8 +1,4 @@
 <?php
-/**
- * 角色管理
- * @author: Gene
- */
 namespace app\controllers\systems;
 
 use app\controllers\BaseController;
@@ -13,6 +9,12 @@ use app\utils\ResponseUtil;
 use yii\data\Pagination;
 use app\utils\Util;
 
+/**
+ * 角色管理
+ * Class RoleController
+ * @package app\controllers\systems
+ * @author Gene <https://github.com/Talkyunyun>
+ */
 class RoleController extends BaseController {
 
     // 列表

@@ -1,12 +1,14 @@
 <?php
-/**
- * 响应工具类
- * @author: Gene
- */
 namespace app\utils;
 
 use yii\web\Response;
 
+/**
+ * 响应工具类
+ * Class ResponseUtil
+ * @package app\utils
+ * @author Gene <https://github.com/Talkyunyun>
+ */
 class ResponseUtil {
 
     // 响应错误message

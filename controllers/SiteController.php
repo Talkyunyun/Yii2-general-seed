@@ -1,12 +1,14 @@
 <?php
-/**
- * 首页控制
- * @author: Gene
- */
 namespace app\controllers;
 
 use app\models\AdminUser\Node;
 
+/**
+ * 首页控制器
+ * Class SiteController
+ * @package app\controllers
+ * @author Gene <https://github.com/Talkyunyun>
+ */
 class SiteController extends BaseController {
 
     // 默认首页

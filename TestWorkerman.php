@@ -3,7 +3,7 @@
 /**
  * Workerman定时器案例
  * php TestWorkerman.php start|stop|restart|status [-d]
- * @author: Gene
+ * @author Gene <https://github.com/Talkyunyun>
  */
 
 require_once __DIR__ . '/vendor/workerman/workerman/Autoloader.php';

@@ -1,7 +1,7 @@
 <?php
 /**
- * APP启动最先执行程序,
- * @param array $data
+ * APP启动最先执行程序
+ * @author Gene <https://github.com/Talkyunyun>
  */
 
 // 加载常量配置文件

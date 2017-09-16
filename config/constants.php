@@ -1,7 +1,7 @@
 <?php
 /**
  * 项目常量配置定义
- * @author: Gene
+ * @author Gene <https://github.com/Talkyunyun>
  */
 
 // 运行环境定义

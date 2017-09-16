@@ -1,11 +1,12 @@
 <?php
-/**
- * Url构造工具
- * @author: Gene
- */
 namespace app\utils;
 
-
+/**
+ * Url工具类
+ * Class UrlUtil
+ * @package app\utils
+ * @author Gene <https://github.com/Talkyunyun>
+ */
 class UrlUtil {
 
 

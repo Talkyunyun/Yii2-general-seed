@@ -1,7 +1,7 @@
 <?php
 /**
  * 命令行配置文件
- * @author: Gene
+ * @author Gene <https://github.com/Talkyunyun>
  */
 
 $config = [

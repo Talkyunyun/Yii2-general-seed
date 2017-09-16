@@ -1,7 +1,7 @@
 <?php
 /**
  * 路由定义
- * @author: Gene
+ * @author Gene <https://github.com/Talkyunyun>
  */
 
 $routes = [

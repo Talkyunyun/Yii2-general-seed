@@ -1,13 +1,22 @@
 <?php
-/**
- * 节点表
- * @author: Gene
- */
-
 namespace app\models\AdminUser;
 
 use yii\db\ActiveRecord;
 
+/**
+ * Class Node 节点表
+ * @package app\models\AdminUser
+ * @property int $pid 父节点ID
+ * @property string $name 节点名称
+ * @property string $url URL地址
+ * @property int $status 状态值
+ * @property int $is_menu 是否是菜单，1：是 0：否
+ * @property int $level 等级
+ * @property int $can_del 是否可以删除，1：是 0：否
+ * @property int $sort 排序
+ * @property string $font_icon 菜单字体图标
+ * @author Gene <https://github.com/Talkyunyun>
+ */
 class Node extends ActiveRecord {
 
     private static $forNodes = [];

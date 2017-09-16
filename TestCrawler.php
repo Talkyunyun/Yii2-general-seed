@@ -3,7 +3,7 @@
 /**
  * 爬虫测试
  * php TestCrawler.php
- * @author: Gene
+ * @author Gene <https://github.com/Talkyunyun>
  */
 
 require_once __DIR__ . '/vendor/owner888/phpspider/autoloader.php';

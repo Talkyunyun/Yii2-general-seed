@@ -1,10 +1,12 @@
 <?php
-/**
- * 请求相关工具【curl】
- * @author: Gene
- */
 namespace app\utils;
 
+/**
+ * CURL工具类
+ * Class RequestUtil
+ * @package app\utils
+ * @author Gene <https://github.com/Talkyunyun>
+ */
 class RequestUtil {
 
 

@@ -1,10 +1,12 @@
 <?php
-/**
- * CSV 操作类
- * @author: Gene
- */
 namespace app\utils;
 
+/**
+ * CSV工具类
+ * Class CsvUtil
+ * @package app\utils
+ * @author Gene <https://github.com/Talkyunyun>
+ */
 class CsvUtil {
 
     /**

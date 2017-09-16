@@ -1,10 +1,12 @@
 <?php
-/**
- * Redis操作
- * @author: Gene
- */
 namespace app\utils;
 
+/**
+ * Redis工具类
+ * Class RedisUtil
+ * @package app\utils
+ * @author Gene <https://github.com/Talkyunyun>
+ */
 class RedisUtil {
     private $_redis;
 

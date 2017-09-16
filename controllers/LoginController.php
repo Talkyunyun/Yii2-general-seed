@@ -1,11 +1,6 @@
 <?php
-/**
- * 登录处理
- * @author: Gene
- */
 namespace app\controllers;
 
-use app\models\AdminUser;
 use Yii;
 use app\utils\Util;
 use yii\web\Controller;
@@ -13,6 +8,12 @@ use app\utils\ResponseUtil;
 use app\models\AdminUser\AdminUserLogin;
 use app\models\AdminUser\AdminUserLoginLog;
 
+/**
+ * 登录控制器
+ * Class LoginController
+ * @package app\controllers
+ * @author Gene <https://github.com/Talkyunyun>
+ */
 class LoginController extends Controller {
 
     /**

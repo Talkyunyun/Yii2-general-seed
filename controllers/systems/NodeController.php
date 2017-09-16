@@ -1,8 +1,4 @@
 <?php
-/**
- * 节点管理
- * @author: Gene
- */
 namespace app\controllers\systems;
 
 use app\controllers\BaseController;
@@ -11,6 +7,12 @@ use app\models\AdminUser\Access;
 use app\utils\ResponseUtil;
 use app\utils\Util;
 
+/**
+ * 节点管理
+ * Class NodeController
+ * @package app\controllers\systems
+ * @author Gene <https://github.com/Talkyunyun>
+ */
 class NodeController extends BaseController {
 
     // 列表

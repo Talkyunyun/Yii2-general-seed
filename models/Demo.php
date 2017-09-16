@@ -1,13 +1,14 @@
 <?php
-/**
- * 模型测试类
- * @author: Gene
- */
-
 namespace app\models;
 
 use yii\db\ActiveRecord;
 
+
+/**
+ * Class Demo 模型案例类
+ * @package app\models
+ * @author Gene <https://github.com/Talkyunyun>
+ */
 class Demo extends ActiveRecord {
 
     // 表名定义

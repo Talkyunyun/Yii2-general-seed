@@ -1,14 +1,15 @@
 <?php
-/**
- * 日志工具类
- * @author: Gene
- */
-
 namespace app\utils;
 
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
+/**
+ * 日志工具类
+ * Class LoggerUtil
+ * @package app\utils
+ * @author Gene <https://github.com/Talkyunyun>
+ */
 class LoggerUtil {
 
     /**

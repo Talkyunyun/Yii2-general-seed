@@ -3,7 +3,13 @@ namespace app\models\AdminUser;
 
 use yii\db\ActiveRecord;
 
-
+/**
+ * Class RoleUser 用户角色表
+ * @package app\models\AdminUser
+ * @property int $role_id 角色ID
+ * @property int $user_id 用户UID
+ * @author Gene <https://github.com/Talkyunyun>
+ */
 class RoleUser extends ActiveRecord {
     public static function tableName() {
         return 'sys_role_user';
