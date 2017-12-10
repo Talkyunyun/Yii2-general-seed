@@ -4,6 +4,8 @@
  * @author Gene <https://github.com/Talkyunyun>
  */
 
+
+
 // 加载初始化脚本
 require_once __DIR__ . '/../config/bootstrap.php';
 
