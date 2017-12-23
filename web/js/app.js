@@ -116,7 +116,7 @@ Core.prototype.showFormatDate = function() {
  */
 Core.prototype.post = function(url, data, callback) {
     var loading, self = this;
-    data._csrf = window._csrf;
+    data.token = window.token;
     layui.use('layer', function() {
         var layer = layui.layer;
         $.ajax({

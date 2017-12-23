@@ -2,7 +2,7 @@
 
 use yii\helpers\Url;
 
-$this->title = '添加管理员';
+$this->title = '添加系统管理员';
 ?>
 <style>
     .layui-form-label {
@@ -36,12 +36,11 @@ $this->title = '添加管理员';
     </div>
 
     <form class="layui-form" method="post">
-
         <div class="layui-form-item">
             <div class="layui-inline">
-                <label class="layui-form-label">用户名:</label>
+                <label class="layui-form-label">登录邮箱:</label>
                 <div class="layui-input-inline">
-                    <input type="text" id="username" class="form-control" placeholder="输入登录用户名" />
+                    <input type="email" id="email" class="form-control" placeholder="输入登录邮箱地址" />
                 </div>
             </div>
             <div class="layui-inline">
@@ -54,9 +53,9 @@ $this->title = '添加管理员';
 
         <div class="layui-form-item">
             <div class="layui-inline">
-                <label class="layui-form-label">联系邮箱</label>
+                <label class="layui-form-label">手机号码</label>
                 <div class="layui-input-inline">
-                    <input type="email" id="email" class="form-control" placeholder="联系邮箱" />
+                    <input type="number" id="phone" class="form-control" placeholder="手机号码" />
                 </div>
             </div>
             <div class="layui-inline">
@@ -68,12 +67,6 @@ $this->title = '添加管理员';
         </div>
 
         <div class="layui-form-item">
-            <div class="layui-inline">
-                <label class="layui-form-label">手机号码</label>
-                <div class="layui-input-inline">
-                    <input type="number" id="phone" class="form-control" placeholder="手机号码" />
-                </div>
-            </div>
             <div class="layui-inline">
                 <label class="layui-form-label">出生日期</label>
                 <div class="layui-input-inline">
@@ -114,7 +107,6 @@ $this->title = '添加管理员';
 
     function submit(index, callback) {
         var data = new Object();
-        data.username = $('#username').val();
         data.phone = $('#phone').val();
         data.password = $('#password').val();
         data.email = $('#email').val();
@@ -129,7 +121,7 @@ $this->title = '添加管理员';
         roleIds = roleIds.join(',');
         data.roles = roleIds;
 
-        app.post("<?= Url::toRoute('systems/user/save') ?>", data, function(res) {
+        app.post("<?= Url::toRoute('/system/user/save') ?>", data, function(res) {
             if (res !== false) {
                 app.showMsg(res, 'success');
                 app.parent.layer.close(index);

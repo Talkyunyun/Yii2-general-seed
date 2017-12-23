@@ -19,7 +19,7 @@ use yii\helpers\Url;
         <ul class="nav nav-second-level">
             <?php  foreach ($row['children'] as $r) {?>
 
-            <?php if ($r['children']) { ?>
+            <?php if (isset($r['children']) && !empty($r['children'])) { ?>
                 <li>
                     <a href="#">
                         <span class="nav-label"><?= Html::encode($r['text']) ?></span>

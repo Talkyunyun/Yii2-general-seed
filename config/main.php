@@ -19,8 +19,8 @@ $config = [
     // 公共组件
     'components' => [
         'request' => [
-            'csrfParam' => '_csrf',
-            'cookieValidationKey' => 'sa2g5UDQPsDd3ImHgXwAa3yrFP6OHovOd3gq5RM'
+            'csrfParam' => 'token',
+            'cookieValidationKey' => '5UDsdQPsSsDdfDSDDd3U2pl4oa232gOd3gq5RM'
         ],
         'redisCache' => [
             'class' => 'yii\redis\Cache',
@@ -29,7 +29,7 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass'   => 'app\models\AdminUser',
+            'identityClass'   => 'app\models\SysUser',
             'enableAutoLogin' => true,
         ],
         'urlManager' => [

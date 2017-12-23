@@ -82,7 +82,7 @@ $this->title = '添加菜单';
         data.font_icon = $('#font_icon').val();
         data.pid = "<?= $pid ?>";
 
-        app.post("<?= Url::toRoute('systems/node/save') ?>", data, function(res) {
+        app.post("<?= Url::toRoute('/system/node/save') ?>", data, function(res) {
             if (res !== false) {
                 app.showMsg(res);
                 app.parent.layer.close(index);

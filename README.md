@@ -11,8 +11,10 @@
 ![image](https://github.com/Talkyunyun/Yii2-seed-general/blob/master/doc/img/login.png?raw=true)
 
 
-
- 
  ```
  composer install
  ```
+ 
+ 
+ #### 数据库表文件
+ [seed_project](https://github.com/Talkyunyun/Yii2-senior-seed/tree/master/doc)

@@ -80,7 +80,7 @@ $this->title = '编辑角色';
         data.nodes = nodes;
         data.id = "<?= $result['id'] ?>";
 
-        app.post("<?= Url::toRoute('systems/role/save') ?>", data, function(res) {
+        app.post("<?= Url::toRoute('/system/role/save') ?>", data, function(res) {
             if (res !== false) {
                 app.showMsg(res, 'success');
                 app.parent.layer.close(index);
@@ -93,7 +93,7 @@ $this->title = '编辑角色';
     }
 
     $(function() {
-        app.post("<?= Url::toRoute('systems/node/get-data') ?>", {
+        app.post("<?= Url::toRoute('/system/node/get-data') ?>", {
             role_id : "<?= $result['id'] ?>"
         }, function(res) {
             console.log(res)

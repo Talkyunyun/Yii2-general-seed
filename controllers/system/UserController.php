@@ -1,12 +1,12 @@
 <?php
-namespace app\controllers\systems;
+namespace app\controllers\system;
 
-use app\controllers\BaseController;
-use app\models\AdminUser;
-use app\models\AdminUser\Role;
-use app\models\AdminUser\RoleUser;
+use app\models\SysUser\SysRole;
+use app\models\SysUser\SysUserRole;
+use app\models\SysUser;
 use app\utils\ResponseUtil;
 use app\utils\Util;
+use app\controllers\BaseController;
 use yii\data\Pagination;
 
 /**
@@ -18,59 +18,26 @@ class UserController extends BaseController {
 
 
     /**
-     * 管理员列表
+     * 系统管理员列表
      * @return string
      */
     public function actionIndex() {
         $request = \Yii::$app->request;
 
-        $status     = $request->get('status', 'all');
-        $userName   = $request->get('username', false);
-        $phone      = $request->get('phone', false);
-        $email      = $request->get('email', false);
-        $dateType   = $request->get('dateType', false);
-        $startDate  = $request->get('start_date', false);
-        $endDate    = $request->get('end_date', false);
-
-        $where = '';
+        $status = $request->get('status', 'all');
+        $email  = $request->get('email', false);
+        $where  = 'status<>9';
         $bindParam = [];
         if ($status != 'all') {
             $where .= ' AND status=:status';
             $bindParam[':status'] = $status;
         }
-        if (!empty($userName)) {
-            $where .= ' AND username like :username';
-            $bindParam[':username'] = "%{$userName}%";
-        }
-        if (!empty($phone)) {
-            $where .= ' AND phone=:phone';
-            $bindParam[':phone'] = $phone;
-        }
         if (!empty($email)) {
             $where .= ' AND email like :email';
             $bindParam[':email'] = "%{$email}%";
         }
-
-        // 处理时间筛选
-        if (!empty($dateType)) {
-            if ($dateType == -1) {
-                $beginTime = strtotime($startDate);
-                $endTime = strtotime($endDate);
-            } else {
-                $day = $dateType == 1 ? 0 : $dateType;
-                $beginTime = mktime(0, 0, 0, date('m'), date('d') - $day, date('Y'));
-                $endTime = mktime(23, 59, 59, date('m'), date('d'), date('Y'));
-            }
-
-            $where .= ' AND created>=:beginTime AND created<=:endTime';
-            $bindParam[':beginTime'] = $beginTime;
-            $bindParam[':endTime'] = $endTime;
-        }
-
-        $query = AdminUser::find()
-        ->where($where, $bindParam);
-
-        $total = $query->count();
+        $query = SysUser::find()->where($where, $bindParam);
+        $total = $query->count('id');
         $page  = new Pagination([
             'pageSize'   => 20,
             'totalCount' =>$total
@@ -82,31 +49,24 @@ class UserController extends BaseController {
             ->orderBy('created desc')
             ->asArray()
             ->all();
-
-        foreach ($data as $key=>$row) {
-            $data[$key]['roles'] = AdminUser::getUserRolesByUid($row['id']);
+        foreach ($data as $key=>$item) {
+            $data[$key]['roles'] = SysUser::getUserRolesByUid($item['id']);
         }
 
         return $this->render($this->action->id, [
-            'result' => $data,
-            'page' => $page,
-            'total'=> $total,
-            'statusList' => AdminUser::getStatusList(),
+            'result'    => $data,
+            'page'      => $page,
+            'total'     => $total,
+            'statusList'=> SysUser::getStatusList(),
             'status'    => $status,
-            'username'  => $userName,
-            'phone'    => $phone,
-            'email'     => $email,
-            'dateType'  => $dateType,
-            'startDate' => $startDate,
-            'endDate'   => $endDate,
+            'email'     => $email
         ]);
     }
-
 
     // 添加
     public function actionCreate() {
         // 获取所有角色
-        $roles = Role::find()
+        $roles = SysRole::find()
             ->select('id, name')
             ->where(['status' => 1])
             ->asArray()
@@ -122,18 +82,20 @@ class UserController extends BaseController {
         $request = \Yii::$app->request;
 
         $id     = $request->get('id', 0);
-        $result = AdminUser::getDataById($id);
+        $result = SysUser::getDataById($id);
         if (empty($result)) {
             Util::alert('没有该用户信息');
         }
 
         // 获取所有角色
-        $roles = Role::find()->select('id, name')
+        $roles = SysRole::find()
+            ->select('id, name')
             ->where(['status' => 1])
+            ->asArray()
             ->all();
 
         // 获取用户角色
-        $userRoles = RoleUser::getUserRoleAll($id);
+        $userRoles = SysUserRole::getUserRoleAll($id);
 
         return $this->render($this->action->id, [
             'result'    => $result,
@@ -142,7 +104,6 @@ class UserController extends BaseController {
         ]);
     }
 
-
     /**
      * 保存用户信息
      * @return array
@@ -150,58 +111,46 @@ class UserController extends BaseController {
     public function actionSave() {
         $request = \Yii::$app->request;
 
-        $db      = \Yii::$app->db;
+        $db = \Yii::$app->db;
         $dbTrans = $db->beginTransaction();
         try {
             if (!$request->isPost) {
                 throw new \Exception('非法访问', 1001);
             }
 
-            $isPassword = false;
-            $data       = $request->post();
-            $password   = $request->post('password', false);
-            $id         = $request->post('id', 0);
+            $data     = $request->post();
+            $password = $request->post('password', false);
+            $id       = (int)$request->post('id', 0);
             if (empty($id)) {// 添加
-                $model      = new AdminUser();
-                $isPassword = true;
-
-                $model->setScenario('create');
+                $model = new SysUser();
             } else {// 修改
-                $model = AdminUser::findOne($id);
+                $model = SysUser::findOne($id);
                 if (empty($model)) {
                     throw new \Exception('不存在该用户信息', 1002);
                 }
-                if (!empty($password)) $isPassword = true;
-
-                $model->setScenario('update');
             }
-
             // 检查是否是admin用户
-            if ($model->username == 'admin') {
-                unset($data['username']);
+            if (strtolower($model->email) == \Yii::$app->params['sys_user_email']) {
+                unset($data['email']);
                 unset($data['roles']);
                 unset($data['status']);
             }
-
-            $model->attributes = $data;
-            if (!empty($isPassword)) {
-                $model->password = AdminUser::getNewPassword($password);
-            }
-            $model->updated    = date('Y-m-d');
+            $password = SysUser::getNewPassword($password);
+            $model->setAttributes($data, false);
+            $model->password = $password;
+            $model->updated  = date('Y-m-d H:i:s');
             if (!$model->validate()) {
                 throw new \Exception(Util::getModelError($model->errors), 1001);
             }
-
             if (!$model->save()) {
                 throw new \Exception('保存失败', 1002);
             }
             $roles = $request->post('roles', false);
+            // 1、删除旧角色
+            SysUserRole::deleteAll('user_id=:uid', [':uid' => $model->id]);
             if (!empty($roles)) {
                 $roles = explode(',', $roles);
                 if (is_array($roles) && count($roles) > 0) {
-                    // 1、删除旧角色
-                    RoleUser::deleteAll('user_id=:uid', [':uid' => $model->id]);
-
                     // 2、添加新角色
                     $newRole = [];
                     foreach ($roles as $key=>$row) {
@@ -209,7 +158,7 @@ class UserController extends BaseController {
                         $newRole[$key][1] = $model->id;
                     }
                     if (!$db->createCommand()
-                        ->batchInsert(RoleUser::tableName(), ['role_id', 'user_id'], $newRole)
+                        ->batchInsert(SysUserRole::tableName(), ['role_id', 'user_id'], $newRole)
                         ->execute()) {
                         throw new \Exception('保存失败', 1003);
                     }
@@ -222,7 +171,7 @@ class UserController extends BaseController {
             $dbTrans->rollBack();
             $msg = $e->getCode() == 0 ? '保存失败' : $e->getMessage();
 
-            return ResponseUtil::error($msg);
+            return ResponseUtil::error($e->getMessage());
         }
     }
 
@@ -238,7 +187,7 @@ class UserController extends BaseController {
                 $newPassword = $request->post('new_password', false);
                 $notPassword = $request->post('not_password', false);
 
-                $adminm = AdminUser::getCurrent();
+                $adminm = SysUser::getCurrent();
                 $isOld = \Yii::$app->security->validatePassword($oldPassword, $adminm->password);
                 if (!$isOld) {
                     throw new \Exception('旧密码输入错误', 1000);
@@ -247,8 +196,7 @@ class UserController extends BaseController {
                 if (empty($newPassword) || $newPassword != $notPassword) {
                     throw new \Exception('确认密码输入不正确', 1001);
                 }
-                $adminm->setScenario('update_password');
-                $adminm->password = AdminUser::getNewPassword($newPassword);
+                $adminm->password = SysUser::getNewPassword($newPassword);
                 $adminm->updated = date('Y-m-d H:i:s');
                 if ($adminm->save()) {
                     return ResponseUtil::success('修改成功');
@@ -258,7 +206,7 @@ class UserController extends BaseController {
             } catch (\Exception $e) {
                 $msg = $e->getCode() == 0 ? '修改失败' : $e->getMessage();
 
-                return ResponseUtil::error($e->getMessage());
+                return ResponseUtil::error($msg);
             }
         }
 

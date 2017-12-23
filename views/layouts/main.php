@@ -22,7 +22,7 @@ $this->beginPage();
     <link rel="stylesheet" href="/css/style.css?v=<?= $version ?>">
     <?php $this->head() ?>
     <script type="text/javascript">
-        window._csrf = "<?= Yii::$app->request->csrfToken ?>";
+        window.token = "<?= Yii::$app->request->csrfToken ?>";
     </script>
 </head>
 

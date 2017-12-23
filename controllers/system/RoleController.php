@@ -1,13 +1,13 @@
 <?php
-namespace app\controllers\systems;
+namespace app\controllers\system;
 
-use app\controllers\BaseController;
-use app\models\AdminUser\Access;
-use app\models\AdminUser\Role;
-use app\models\AdminUser\RoleUser;
-use app\utils\ResponseUtil;
-use yii\data\Pagination;
 use app\utils\Util;
+use yii\data\Pagination;
+use app\utils\ResponseUtil;
+use app\models\SysUser\SysRole;
+use app\models\SysUser\SysUserRole;
+use app\controllers\BaseController;
+use app\models\SysUser\SysPermission;
 
 /**
  * 角色管理
@@ -28,7 +28,7 @@ class RoleController extends BaseController {
             $where .= ' AND name like :name';
             $bindParam[':name'] = "%{$name}%";
         }
-        $query = Role::find()->where($where, $bindParam);
+        $query = SysRole::find()->where($where, $bindParam);
 
         $total = $query->count();
         $page = new Pagination([
@@ -46,7 +46,8 @@ class RoleController extends BaseController {
             'result'    => $result,
             'page'      => $page,
             'total'     => $total,
-            'name'      => $name
+            'name'      => $name,
+            'statusList'=> SysRole::getStatusList()
         ]);
     }
 
@@ -65,13 +66,13 @@ class RoleController extends BaseController {
                 throw new \Exception('请选择需要删除的角色', 1001);
             }
             // 删除角色
-            Role::deleteAll('id=:id', [':id' => $id]);
+            SysRole::deleteAll('id=:id', [':id' => $id]);
 
             // 删除角色权限
-            Access::deleteAll('role_id=:role_id', [':role_id'=>$id]);
+            SysPermission::deleteAll('role_id=:role_id', [':role_id'=>$id]);
 
             // 删除用户角色
-            RoleUser::deleteAll('role_id=:role_id', [':role_id'=>$id]);
+            SysUserRole::deleteAll('role_id=:role_id', [':role_id'=>$id]);
 
             return ResponseUtil::success('删除成功');
         } catch (\Exception $e) {
@@ -87,7 +88,7 @@ class RoleController extends BaseController {
         $request = \Yii::$app->request;
         $id = $request->get('id', 0);
 
-        $result = Role::find()->where([
+        $result = SysRole::find()->where([
             'id' => $id
         ])->one();
         if (empty($result)) {
@@ -109,43 +110,44 @@ class RoleController extends BaseController {
     public function actionSave() {
         $request = \Yii::$app->request;
 
-        $dbTrans = \Yii::$app->db->beginTransaction();
+        $db = \Yii::$app->db;
+        $dbTrans = $db->beginTransaction();
         try {
             if (!$request->isPost) {
                 throw new \Exception('非法访问', 1001);
             }
             $data = $request->post();
-            $id = (int)$data['id'];
+            $id   = $request->post('id', 0);
+            $nodes= $request->post('nodes', false);
             if (empty($id)) {// 添加
-                $model = new Role();
+                $model = new SysRole();
             } else {// 修改
-                $model = Role::findOne($id);
+                $model = SysRole::findOne($id);
+                if (empty($model)) {
+                    throw new \Exception('不存在该角色信息', 1001);
+                }
             }
-            $model->attributes = $data;
-            $model->remark = $data['remark'];
-            $model->status = (int)$data['status'];
+            $model->setAttributes($data, false);
             if (!$model->validate()) {
                 throw new \Exception(Util::getModelError($model->errors), 1001);
             }
-
             if ($model->save()) {
-                if (!empty($data['nodes'])) {
-                    $nodes = explode(',', $data['nodes']);
+                if (!empty($nodes)) {
+                    $nodes = explode(',', $nodes);
                     if (!is_array($nodes) || count($nodes) < 1) {
                         throw new \Exception('保存失败', 1002);
                     }
-                    $roleId = $model->getAttribute('id');
                     // 1.删除旧权限
-                    Access::deleteAll('role_id=:role_id', [':role_id' => $roleId]);
+                    SysPermission::deleteAll('role_id=:role_id', [':role_id' => $model->id]);
 
                     // 2.添加新权限
                     $newNode = [];
                     foreach ($nodes as $key => $nodeId) {
-                        $newNode[$key][0] = $roleId;
+                        $newNode[$key][0] = $model->id;
                         $newNode[$key][1] = $nodeId;
                     }
-                    \Yii::$app->db->createCommand()
-                        ->batchInsert(Access::tableName(), ['role_id', 'node_id'], $newNode)
+                    $db->createCommand()
+                        ->batchInsert(SysPermission::tableName(), ['role_id', 'node_id'], $newNode)
                         ->execute();
                 }
                 $dbTrans->commit();
@@ -162,34 +164,4 @@ class RoleController extends BaseController {
         }
     }
 
-    // 开关
-    public function actionOnOff() {
-        $request = \Yii::$app->request;
-
-        try {
-            if (!$request->isPost) throw new \Exception('非法访问', 1001);
-
-            $id = $request->post('id', false);
-            $model = Role::findOne($id);
-            if (empty($model)) {
-                throw new \Exception('不存在该记录信息', 1001);
-            }
-            if ($model->status == 1) {
-                $status = 0;
-            } else {
-                $status = 1;
-            }
-
-            $model->status = $status;
-            if ($model->save()) {
-                return ResponseUtil::success(1);
-            }
-
-            throw new \Exception('删除失败', 1001);
-        } catch (\Exception $e) {
-            $msg = $e->getCode() == 0 ? '操作失败' : $e->getMessage();
-
-            return ResponseUtil::error($msg);
-        }
-    }
 }

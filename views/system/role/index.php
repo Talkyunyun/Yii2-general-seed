@@ -14,7 +14,7 @@ $this->title = '角色列表';
         <div>
             <a href="#" class="btn btn-default btn-sm open_save"
                data-title="添加角色"
-               data-url="<?= Url::toRoute('systems/role/create') ?>">
+               data-url="<?= Url::toRoute('/system/role/create') ?>">
                 <i class="fa fa-plus"></i> 添加角色
             </a>
         </div>
@@ -42,26 +42,13 @@ $this->title = '角色列表';
                             <td class="text-center"><?= Html::encode($item['id']) ?></td>
                             <td class="text-center"><?= Html::encode($item['name']) ?></td>
                             <td class="text-center"><?= Html::encode($item['remark']) ?></td>
-                            <td class="text-center">
-                                <form class="layui-form">
-                                    <input type="checkbox"
-                                           lay-skin="switch"
-                                           lay-filter="statusOn"
-                                            <?php
-                                                if ($item['status'] == 1) {
-                                                    echo 'checked';
-                                                }
-                                            ?>
-                                           value="<?= $item['id'] ?>"
-                                           lay-filter="switchTest" lay-text="正常|禁用">
-                                </form>
-                            </td>
+                            <td class="text-center"><?= $statusList[$item['status']] ?></td>
                             <td class="text-center">
                                 <a href="#"
                                    class="open_save"
                                    data-title="<?= $item['name'] ?> - 编辑角色"
                                    data-url="<?= Url::toRoute([
-                                       'systems/role/update',
+                                       '/system/role/update',
                                        'id'=>$item['id']
                                    ]) ?>"
                                 >[编辑]</a>
@@ -116,7 +103,7 @@ $this->title = '角色列表';
             app.layer.confirm('您确定要删除吗？', {
                 btn: ['确认', '取消']
             }, function(){
-                app.post("<?= Url::toRoute('systems/role/del') ?>", {
+                app.post("<?= Url::toRoute('/system/role/del') ?>", {
                     id : id
                 }, function(res) {
                     if (res !== false) {
@@ -126,21 +113,5 @@ $this->title = '角色列表';
                 });
             }, function(){});
         });
-
-        setTimeout(function() {
-            console.log(app.form)
-            app.form.on('switch(statusOn)', function(data){
-                app.post("<?= Url::toRoute('systems/role/on-off') ?>", {
-                    id : data.value
-                }, function(res) {
-                    if (res == 1) {
-                        app.showMsg('设置成功');
-                        window.location.reload();
-                    } else {
-                        app.showMsg('设置失败', 'error');
-                    }
-                });
-            });
-        }, 1000);
     });
 </script>

@@ -3,6 +3,7 @@
  * 节点编辑
  * @author: Gene
  */
+
 use yii\helpers\Url;
 $this->title = '菜单管理';
 ?>
@@ -37,7 +38,7 @@ html, body, .container-fluid, .row{height:100%}
         <h3>节点列表</h3>
         <div class="btn-group" role="group">
             <button data-title="添加节点菜单"
-                    data-url="<?= Url::toRoute('systems/node/create') ?>"
+                    data-url="<?= Url::toRoute('/system/node/create') ?>"
                     type="button" class="btn btn-info btn-xs open_save">创建</button>
             <button id="del" type="button" class="btn btn-danger btn-xs">删除</button>
         </div>
@@ -121,7 +122,7 @@ html, body, .container-fluid, .row{height:100%}
                 btn: ['确认', '取消']
             }, function(i) {
                 layer.close(i);
-                app.post("<?= Url::toRoute('systems/node/del') ?>", {
+                app.post("<?= Url::toRoute('/system/node/del') ?>", {
                     id : id
                 }, function(res) {
                     if (res !== false) {
@@ -166,7 +167,7 @@ html, body, .container-fluid, .row{height:100%}
             app.showMsg('请选择需要修改的节点', 'error');
             return false;
         }
-        app.post("<?= Url::toRoute('systems/node/save') ?>", data, function(res) {
+        app.post("<?= Url::toRoute('/system/node/save') ?>", data, function(res) {
             if (res !== false) {
                 app.showMsg(res, 'success');
 
@@ -176,7 +177,7 @@ html, body, .container-fluid, .row{height:100%}
     }
 
     function initData() {
-        app.post("<?= Url::toRoute('systems/node/get-data') ?>", {}, function(res) {
+        app.post("<?= Url::toRoute('/system/node/get-data') ?>", {}, function(res) {
             if (res !== false) {
                 // 制空数据
                 id = 0;
@@ -194,7 +195,7 @@ html, body, .container-fluid, .row{height:100%}
                     }
                 }).bind('click.jstree', function(e) {
                     id = $(e.toElement).parent('li').attr('id');
-                    app.post("<?= Url::toRoute('systems/node/get-info') ?>", {
+                    app.post("<?= Url::toRoute('/system/node/get-info') ?>", {
                         id : id
                     }, function(res) {
                         if (res !== false || res !== null) {

@@ -20,7 +20,7 @@ return [
         'db' => [
             'class'         => 'yii\db\Connection',
             'charset'       => 'utf8',
-            'dsn'           => 'mysql:host=127.0.0.1:3306;dbname=seed_admin',
+            'dsn'           => 'mysql:host=127.0.0.1:3306;dbname=seed_project',
             'username'      => 'root',
             'password'      => 'root',
             'tablePrefix'   => 's_'

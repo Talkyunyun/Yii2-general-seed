@@ -5,7 +5,8 @@
  */
 
 $routes = [
-    '/hm.gif' => 'statistics/index'
+    '/logout' => 'login/logout',
+    '/login'  => 'login/index'
 ];
 
 return $routes;

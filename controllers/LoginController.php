@@ -5,9 +5,8 @@ use Yii;
 use app\utils\Util;
 use yii\web\Controller;
 use app\utils\ResponseUtil;
-use app\models\AdminUser\AdminUserLogin;
-use app\models\AdminUser\AdminUserLoginLog;
-
+use app\models\SysUser\SysUserLogin;
+use app\models\SysUser\SysUserLoginLogs;
 /**
  * 登录控制器
  * Class LoginController
@@ -48,14 +47,14 @@ class LoginController extends Controller {
             if(!$isGuest) {
                 return ResponseUtil::success('登录成功');
             }
-            $model = new AdminUserLogin();
-            $model->username = $request->post('username', false);
+            $model = new SysUserLogin();
+            $model->email    = $request->post('email', false);
             $model->password = $request->post('password', false);
             if (!$model->login()) {
                 throw new \Exception(Util::getModelError($model->errors), 1001);
             }
             // 记录登录日志
-            AdminUserLoginLog::add();
+            SysUserLoginLogs::add();
 
             return ResponseUtil::success('登录成功');
         } catch (\Exception $e) {

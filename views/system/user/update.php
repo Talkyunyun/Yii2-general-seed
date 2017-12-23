@@ -6,7 +6,9 @@
 
 use yii\helpers\Url;
 
-$this->title = '修改管理员';
+$sysEmail = Yii::$app->params['sys_user_email'];
+
+$this->title = '修改系统管理员';
 ?>
 <style>
     .layui-form-label {
@@ -40,21 +42,18 @@ $this->title = '修改管理员';
     </div>
 
     <form class="layui-form" method="post">
-
         <div class="layui-form-item">
             <div class="layui-inline">
-                <label class="layui-form-label">用户名</label>
+                <label class="layui-form-label">登录邮箱:</label>
                 <div class="layui-input-inline">
-                    <input type="text" id="username"
-                           <?php
-                            if ($result['username'] == 'admin') {
-                                echo 'disabled';
-                            }
-                           ?>
-                           value="<?= $result['username'] ?>" class="form-control"
-                           placeholder="输入登录用户名" />
+                    <input type="email"
+                           id="email"
+                           <?= strtolower($result['email']) == $sysEmail ? 'disabled' : '' ?>
+                           value="<?= $result['email'] ?>"
+                           class="form-control" placeholder="输入登录邮箱地址" />
                 </div>
             </div>
+
             <div class="layui-inline">
                 <label class="layui-form-label">密码</label>
                 <div class="layui-input-inline">
@@ -65,10 +64,9 @@ $this->title = '修改管理员';
 
         <div class="layui-form-item">
             <div class="layui-inline">
-                <label class="layui-form-label">联系邮箱</label>
+                <label class="layui-form-label">手机号码</label>
                 <div class="layui-input-inline">
-                    <input type="email" id="email"
-                           value="<?= $result['email'] ?>" class="form-control" placeholder="联系邮箱" />
+                    <input type="number" id="phone" value="<?= $result['phone'] ?>" class="form-control" placeholder="手机号码" />
                 </div>
             </div>
             <div class="layui-inline">
@@ -82,12 +80,6 @@ $this->title = '修改管理员';
 
         <div class="layui-form-item">
             <div class="layui-inline">
-                <label class="layui-form-label">手机号码</label>
-                <div class="layui-input-inline">
-                    <input type="number" id="phone" value="<?= $result['phone'] ?>" class="form-control" placeholder="手机号码" />
-                </div>
-            </div>
-            <div class="layui-inline">
                 <label class="layui-form-label">出生日期</label>
                 <div class="layui-input-inline">
                     <input type="text" id="birth_date"
@@ -97,7 +89,7 @@ $this->title = '修改管理员';
             </div>
         </div>
 
-        <?php if ($result['username'] != 'admin') { ?>
+        <?php if (strtolower($result['email']) != $sysEmail) { ?>
             <div class="layui-form-item">
                 <label class="layui-form-label">状态</label>
                 <div class="layui-input-block">
@@ -124,11 +116,7 @@ $this->title = '修改管理员';
                     <?php foreach ($roles as $item) { ?>
                         <li>
                             <input type="checkbox" name="role_id[]"
-                                    <?php
-                                        if (in_array($item['id'], $userRoles)) {
-                                            echo 'checked';
-                                        }
-                                    ?>
+                                   <?= in_array($item['id'], $userRoles) ? 'checked' : '' ?>
                                    class="role_id" value="<?= $item['id'] ?>"
                                    lay-skin="primary" title="<?= $item['name'] ?>" />
                         </li>
@@ -147,26 +135,25 @@ $this->title = '修改管理员';
     });
 
     function submit(index, callback) {
-        var data = new Object();
-        data.phone = $('#phone').val();
-        data.password = $('#password').val();
-        data.email = $('#email').val();
-        data.real_name = $('#real_name').val();
+        var data        = new Object();
+        data.phone      = $('#phone').val();
+        data.password   = $('#password').val();
+        data.real_name  = $('#real_name').val();
         data.birth_date = $('#birth_date').val();
-        data.id = "<?= $result['id'] ?>";
+        data.id         = "<?= $result['id'] ?>";
 
-        <?php if ($result['username'] != 'admin') { ?>
-            data.username = $('#username').val();
+        <?php if (strtolower($result['email']) != $sysEmail) { ?>
+            data.email  = $('#email').val();
             data.status = $("[name='status']:checked").val();
             var roleIds = new Array();
             $(".role_id:checkbox:checked").each(function(){
                 roleIds.push($(this).val())
-            })
+            });
             roleIds = roleIds.join(',');
             data.roles = roleIds;
         <?php } ?>
 
-        app.post("<?= Url::toRoute('systems/user/save') ?>", data, function(res) {
+        app.post("<?= Url::toRoute('/system/user/save') ?>", data, function(res) {
             if (res !== false) {
                 app.showMsg(res, 'success');
                 app.parent.layer.close(index);

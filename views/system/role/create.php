@@ -62,7 +62,7 @@ $this->title = '添加角色';
         data.status = $("[name='status']:checked").val();
         data.nodes = nodes;
 
-        app.post("<?= \yii\helpers\Url::toRoute('systems/role/save') ?>", data, function(res) {
+        app.post("<?= \yii\helpers\Url::toRoute('/system/role/save') ?>", data, function(res) {
             if (res !== false) {
                 app.showMsg(res, 'success');
                 app.parent.layer.close(index);
@@ -74,7 +74,7 @@ $this->title = '添加角色';
         });
     }
     $(function() {
-        app.post("<?= Url::toRoute('systems/node/get-data') ?>", {}, function(res) {
+        app.post("<?= Url::toRoute('/system/node/get-data') ?>", {}, function(res) {
             if (res !== false) {
                 $("#menuBox").jstree({
                     plugins : ['checkbox'],

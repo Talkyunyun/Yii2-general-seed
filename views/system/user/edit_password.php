@@ -50,7 +50,7 @@ $this->title = '修改密码';
         data.new_password = $('#new_password').val();
         data.not_password = $('#not_password').val();
 
-        app.post("<?= Url::toRoute('systems/user/password') ?>", data, function(res) {
+        app.post("<?= Url::toRoute('/system/user/password') ?>", data, function(res) {
             if (res !== false) {
                 app.showMsg(res, 'success');
                 app.parent.layer.close(index);

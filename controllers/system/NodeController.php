@@ -1,11 +1,12 @@
 <?php
-namespace app\controllers\systems;
+namespace app\controllers\system;
 
-use app\controllers\BaseController;
-use app\models\AdminUser\Node;
-use app\models\AdminUser\Access;
+
+use app\models\SysUser\SysNode;
+use app\models\SysUser\SysPermission;
 use app\utils\ResponseUtil;
 use app\utils\Util;
+use app\controllers\BaseController;
 
 /**
  * 节点管理
@@ -26,10 +27,10 @@ class NodeController extends BaseController {
         $request = \Yii::$app->request;
 
         try {
-            $roleNodes   = [];
-            $roleId = $request->post('role_id', 0);
+            $roleNodes= [];
+            $roleId   = (int)$request->post('role_id', 0);
             if (!empty($roleId)) {
-                $roleNode = Access::find()
+                $roleNode = SysPermission::find()
                     ->where(['role_id' => $roleId])
                     ->asArray()->all();
                 foreach ($roleNode as $item) {
@@ -37,7 +38,7 @@ class NodeController extends BaseController {
                 }
             }
 
-            return ResponseUtil::success(Node::getTreeMenu(0, $roleNodes));
+            return ResponseUtil::success(SysNode::getTreeMenu(0, $roleNodes));
         } catch (\Exception $e) {
             $msg = $e->getCode() == 0 ? '获取失败' : $e->getMessage();
 
@@ -51,7 +52,7 @@ class NodeController extends BaseController {
 
         try {
             $id = $request->post('id', 0);
-            $result = Node::getDataById($id);
+            $result = SysNode::getDataById($id);
 
             return ResponseUtil::success($result);
         } catch (\Exception $e) {
@@ -74,7 +75,7 @@ class NodeController extends BaseController {
             if (empty($id)) {
                 throw new \Exception('请选择需要删除的节点', 1001);
             }
-            $model = Node::find()
+            $model = SysNode::find()
                 ->where([
                     'id'      => $id,
                     'can_del' => 1
@@ -82,32 +83,21 @@ class NodeController extends BaseController {
             if (empty($model)) {
                 throw new \Exception('该节点或者菜单不允许删除', 1002);
             }
-            $ids   = Node::getMenuAllChildById($id);
+            $ids   = SysNode::getMenuAllChildById($id);
             $ids[] = $id;
 
             # 1. 删除当前分类对应的所有子分类
             # 2. 删除在menu_id 对应到权限中的所有menu_id
-            $db = \Yii::$app->db;
-            $dbTrans = $db->beginTransaction();
-            try {
-                foreach ($ids as $id) {
-                    $num = $db->createCommand()
-                        ->delete(Node::tableName(), 'can_del=1 AND id=:id', [
-                            ':id' => $id
-                        ])
-                        ->execute();
-                    if (empty($num)) {
-                        throw new \Exception('删除失败', 1005);
-                    }
-                }
-                $dbTrans->commit();
-
-                return ResponseUtil::success('删除成功');
-            } catch (\Exception $e) {
-                $dbTrans->rollBack();
-
-                throw new \Exception('删除失败', 1004);
+            foreach ($ids as $id) {
+                SysNode::deleteAll('can_del=1 AND id=:id', [
+                    ':id' => $id
+                ]);
+                SysPermission::deleteAll('node_id=:id', [
+                    ':id' => $id
+                ]);
             }
+
+            return ResponseUtil::success('删除成功');
         } catch (\Exception $e) {
             $msg = $e->getCode() == 0 ? '删除失败' : $e->getMessage();
 
@@ -134,12 +124,12 @@ class NodeController extends BaseController {
                 throw new \Exception('非法访问', 1001);
             }
             $data = $request->post();
-            $id   = (int)$data['id'];
+            $id   = $request->post('id');
             if (empty($id)) {// 添加
-                $model = new Node();
+                $model = new SysNode();
                 $model->setScenario('create');
             } else {// 修改
-                $model = Node::findOne($id);
+                $model = SysNode::findOne($id);
                 $model->setScenario('update');
             }
 
