@@ -30,7 +30,7 @@ class ResponseUtil {
      * @param int $code
      * @return array
      */
-    public static function error(string $msg = '错误的请求', int $code = 1000) {
+    public static function error(string $msg = '请求失败!', int $code = 1000) {
         \Yii::$app->response->format = self::$type;
 
         self::$code = $code;
@@ -50,7 +50,7 @@ class ResponseUtil {
 
         self::$data = $data;
         self::$code = 0;
-        self::$msg  = '操作成功';
+        self::$msg  = '请求成功!';
 
         return self::_getData();
     }

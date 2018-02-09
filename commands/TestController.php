@@ -14,18 +14,18 @@ class TestController extends Controller {
 
     // 访问: php yii test/index
     public function actionIndex() {
-        die("sdfsdfdsf");
+        echo "Welcome Console.\n";
     }
 
 
     // 守护进程日志生成
     public function actionLog() {
-        $logger = LoggerUtil::getLogger("logs_aa");
+        $logger = LoggerUtil::getLogger('test_');
 
-        $logger->info("我是命令进来的:", [
+        $logger->addNotice("我是命令进来的:", [
             "date" => date('Y-m-d H:i:s')
         ]);
 
-        echo "hahah\r\n";
+        echo "添加成功\n";
     }
 }

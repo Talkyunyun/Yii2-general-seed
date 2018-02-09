@@ -4,19 +4,19 @@
     "keywords": ["gene", "yii2", "seed"],
     "type": "project",
     "license": "BSD-3-Clause",
+    "support": {
+        "source": "https://github.com/Talkyunyun/yii2-api-admin-seed"
+    },
+    "minimum-stability": "stable",
     "require": {
-        "php" : ">=5.4.0",
-        "yiisoft/yii2" : "~2.0.6",
+        "php": ">=7.0.0",
+        "yiisoft/yii2": ">=2.0.13",
         "monolog/monolog": "^1.22",
         "workerman/workerman": "^3.5",
         "owner888/phpspider": "^2.0",
         "phpoffice/phpexcel": "^1.8"
     },
-    "require-dev" : {
-        "yiisoft/yii2-debug": "~2.0.0",
-        "yiisoft/yii2-gii": "~2.0.0",
-        "yiisoft/yii2-faker": "~2.0.0"
-    },
+    "require-dev" : {},
     "config" : {
         "process-timeout": 1800
     }

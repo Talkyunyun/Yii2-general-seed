@@ -15,7 +15,6 @@ defined('YII_ENV') or define('YII_ENV', ENV_LOCAL);
 defined('YII_DEBUG') or define('YII_DEBUG', YII_ENV == ENV_PRD ? false : true);
 
 
-
 function dd($data = []) {
     var_dump($data);die;
 };

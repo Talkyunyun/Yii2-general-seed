@@ -52,7 +52,7 @@ $version = Yii::$app->params['file_version'];
         <div class="pull-left">
             &copy; 2016-<?= date('Y') ?> All Rights Reserved.
             <a style="color:#fff;"
-               href="<?= Yii::$app->params['app_url'] ?>"
+               href="<?= Yii::$app->params['app_url'][YII_ENV] ?>"
                target="_blank"><?= Yii::$app->params['app_name'] ?></a>
         </div>
     </div>
